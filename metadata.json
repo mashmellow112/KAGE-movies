@@ -1,6 +1,6 @@
 {
   "name": "Kage Movie Library",
-  "description": "A premium movie library app featuring Google Sign-in, movie trailer previews, and integrated payment options for Airtel and MTN.",
+  "description": "A premium movie platform featuring a Ugx 4,000 monthly pass for unlimited downloads, Google Sign-in, and Mobile Money (Airtel/MTN) integration.",
   "requestFramePermissions": [],
   "majorCapabilities": []
 }
