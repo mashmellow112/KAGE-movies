@@ -1,0 +1,6 @@
+{
+  "name": "Kage Movie Library",
+  "description": "A premium movie library app featuring Google Sign-in, movie trailer previews, and integrated payment options for Airtel and MTN.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

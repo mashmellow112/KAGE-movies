@@ -1,0 +1,44 @@
+{
+  "entities": {
+    "Movie": {
+      "title": "Movie",
+      "description": "Represents a movie in the library",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "posterUrl": { "type": "string" },
+        "trailerUrl": { "type": "string" },
+        "price": { "type": "number" },
+        "genre": { "type": "array" },
+        "rating": { "type": "number" }
+      },
+      "required": ["title", "posterUrl", "price"]
+    },
+    "Subscription": {
+      "title": "Subscription",
+      "description": "Represents a mobile money payment for a 30-day movie pass",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "provider": { "type": "string", "enum": ["airtel", "mtn"] },
+        "amount": { "type": "number" },
+        "status": { "type": "string", "enum": ["completed", "failed"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "expiryDate": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "phoneNumber", "provider", "amount", "status", "createdAt", "expiryDate"]
+    }
+  },
+  "firestore": {
+    "/movies": {
+      "schema": "Movie",
+      "description": "Collection of all available movies"
+    },
+    "/payments": {
+      "schema": "Subscription",
+      "description": "Collection of monthly subscription records"
+    }
+  }
+}

@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global safety net - Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    // Movies: public read
+    match /movies/{movieId} {
+      allow read: if true;
+    }
+
+    // Payments: secure Relational patterns for Subscription Pass
+    match /payments/{paymentId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      
+      allow create: if isSignedIn()
+        && incoming().userId == request.auth.uid
+        && incoming().phoneNumber is string
+        && incoming().phoneNumber.size() >= 9
+        && incoming().phoneNumber.size() <= 20
+        && incoming().provider in ['airtel', 'mtn']
+        && (incoming().amount is number || incoming().amount is int)
+        && incoming().amount == 4000
+        && incoming().status == 'completed'
+        && incoming().createdAt == request.time
+        && incoming().expiryDate != null
+        && incoming().keys().hasAll(['userId', 'phoneNumber', 'provider', 'amount', 'status', 'createdAt', 'expiryDate'])
+        && incoming().keys().size() == 7;
+
+      allow update, delete: if false;
+    }
+  }
+}
