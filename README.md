@@ -66,6 +66,17 @@ The app is designed with a "Swiss/Modern" aesthetic, featuring:
 - Glassmorphism effects with `backdrop-blur`.
 - Staggered grid animations for movie cards.
 
+## 🖼️ Media Assets
+
+Local movie posters should be placed in `public/assets/movies/`. 
+To use a local image, update the `posterUrl` in `src/constants/movies.ts`:
+```typescript
+{
+  posterUrl: '/assets/movies/your-image.jpg',
+  // ...
+}
+```
+
 ---
 
 *Built with ❤️ by the Kage Movies Team.*
