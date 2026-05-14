@@ -174,18 +174,18 @@ export default function MainPage({ user }: MainPageProps) {
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(220,38,38,0.2),transparent)]" />
                   
                   <img 
-                    src="https://images.unsplash.com/photo-1542204111-970176884a86?auto=format&fit=crop&q=80&w=2000" 
+                    src="https://m.media-amazon.com/images/M/MV5BMzE0NWVlZGEtYTUyYy00Y2I5LWI2NzktZGEzY2M1N2U0NjRjXkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_.jpg" 
                     className="absolute inset-0 w-full h-full object-cover opacity-60 transition-transform duration-1000 group-hover:scale-105"
                     alt="Hero Backdrop"
                   />
 
                   <div className="absolute inset-0 flex flex-col justify-center px-6 md:px-12 z-20">
-                    <span className="text-red-500 font-bold uppercase tracking-[0.2em] md:tracking-[0.3em] text-[10px] md:text-xs mb-2 md:mb-4">Featured Today</span>
+                    <span className="text-red-500 font-bold uppercase tracking-[0.2em] md:tracking-[0.3em] text-[10px] md:text-xs mb-2 md:mb-4">New Release</span>
                     <h2 className="text-4xl md:text-7xl font-black uppercase italic leading-[0.9] mb-4 md:mb-6 tracking-tighter text-white">
-                      DUNE <br className="hidden md:block" /> PART 2
+                      THE <br className="hidden md:block" /> BEEKEEPER
                     </h2>
                     <p className="max-w-xs md:max-w-md text-gray-400 text-xs md:text-base mb-6 md:mb-10 leading-relaxed line-clamp-3 md:line-clamp-none">
-                      Paul Atreides unites with Chani and the Fremen while on a warpath of revenge against the conspirators who destroyed his family.
+                      One man's brutal campaign for vengeance takes on national stakes after he is revealed to be a former operative of a powerful and clandestine organization known as Beekeepers.
                     </p>
                     <div className="flex flex-wrap gap-3 md:gap-4">
                       <button 
