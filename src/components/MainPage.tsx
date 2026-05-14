@@ -174,7 +174,7 @@ export default function MainPage({ user }: MainPageProps) {
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(220,38,38,0.2),transparent)]" />
                   
                   <img 
-                    src="https://m.media-amazon.com/images/M/MV5BMzE0NWVlZGEtYTUyYy00Y2I5LWI2NzktZGEzY2M1N2U0NjRjXkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_.jpg" 
+                    src="https://lk-aps.bmscdn.com/iedb/movies/images/mobile/listing/xxlarge/the-beekeeper-et00005199-11-01-2024-12-33-39.jpg" 
                     className="absolute inset-0 w-full h-full object-cover opacity-60 transition-transform duration-1000 group-hover:scale-105"
                     alt="Hero Backdrop"
                   />
