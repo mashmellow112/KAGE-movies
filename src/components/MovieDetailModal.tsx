@@ -1,17 +1,17 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Play, ShoppingCart, Star, Calendar, Clock, Tag } from 'lucide-react';
+import { X, Play, ShoppingCart, Star, Calendar, Clock, Tag, Download } from 'lucide-react';
 import { Movie } from '../types';
 
 interface MovieDetailModalProps {
   movie: Movie | null;
   isOpen: boolean;
   onClose: () => void;
-  onPlay: (movie: Movie) => void;
+  onDownload: (movie: Movie) => void;
   onBuy: (movie: Movie) => void;
 }
 
-export default function MovieDetailModal({ movie, isOpen, onClose, onPlay, onBuy }: MovieDetailModalProps) {
+export default function MovieDetailModal({ movie, isOpen, onClose, onDownload, onBuy }: MovieDetailModalProps) {
   if (!movie) return null;
 
   return (
@@ -81,11 +81,11 @@ export default function MovieDetailModal({ movie, isOpen, onClose, onPlay, onBuy
 
                 <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
                   <button
-                    onClick={() => onPlay(movie)}
+                    onClick={() => onDownload(movie)}
                     className="flex-1 h-14 md:h-16 bg-red-600 text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest text-[10px] md:text-xs flex items-center justify-center gap-3 hover:bg-red-700 transition-all active:scale-95 shadow-xl shadow-red-600/20"
                   >
-                    <Play className="w-4 h-4 fill-white" />
-                    Trailer
+                    <Download className="w-4 h-4" />
+                    Download
                   </button>
                   <button
                     onClick={() => onBuy(movie)}

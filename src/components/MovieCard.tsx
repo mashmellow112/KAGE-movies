@@ -1,18 +1,19 @@
 import React from 'react';
-import { Play, ShoppingCart, Star, Heart } from 'lucide-react';
+import { Download, ShoppingCart, Star, Heart } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Movie } from '../types';
 
 interface MovieCardProps {
   movie: Movie;
-  onPlay: (movie: Movie) => void;
+  onDownload: (movie: Movie) => void;
   onBuy: (movie: Movie) => void;
   onClick: (movie: Movie) => void;
   onFavorite: (movie: Movie) => void;
   isFavorite: boolean;
+  isSubscribed?: boolean;
 }
 
-export default function MovieCard({ movie, onPlay, onBuy, onClick, onFavorite, isFavorite }: MovieCardProps) {
+export default function MovieCard({ movie, onDownload, onBuy, onClick, onFavorite, isFavorite, isSubscribed }: MovieCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
@@ -31,15 +32,15 @@ export default function MovieCard({ movie, onPlay, onBuy, onClick, onFavorite, i
       />
       
       {/* Top Badges */}
-      <div className="absolute top-3 left-3 right-3 z-20 flex justify-between items-start opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="absolute top-3 left-3 right-3 z-20 flex justify-between items-start md:opacity-0 md:group-hover:opacity-100 transition-opacity">
         <button 
           onClick={(e) => { e.stopPropagation(); onFavorite(movie); }}
           className={`p-2 rounded-lg backdrop-blur-md border border-white/10 transition-all active:scale-95 ${isFavorite ? 'bg-red-600 text-white border-red-500' : 'bg-black/60 text-white hover:bg-red-600'}`}
         >
           <Heart className={`w-4 h-4 ${isFavorite ? 'fill-white' : ''}`} />
         </button>
-        <div className="bg-black/60 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1 border border-white/10 group-hover:bg-red-600 transition-colors duration-500">
-          <Star className="w-3 h-3 text-yellow-400 fill-yellow-400 group-hover:text-white group-hover:fill-white font-bold" />
+        <div className="bg-black/60 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1 border border-white/10 md:group-hover:bg-red-600 transition-colors duration-500">
+          <Star className="w-3 h-3 text-yellow-400 fill-yellow-400 md:group-hover:text-white md:group-hover:fill-white font-bold" />
           <span className="text-[10px] font-black text-white">{movie.rating}</span>
         </div>
       </div>
@@ -48,31 +49,31 @@ export default function MovieCard({ movie, onPlay, onBuy, onClick, onFavorite, i
       <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500" />
       
       {/* Content Area */}
-      <div className="absolute inset-0 p-4 md:p-5 flex flex-col justify-end z-10">
-        <div className="transform group-hover:-translate-y-2 transition-transform duration-500">
-          <h3 className="text-base md:text-lg font-black uppercase italic tracking-tighter text-white mb-0.5 line-clamp-1 group-hover:line-clamp-none drop-shadow-md">
+      <div className="absolute inset-0 p-3 md:p-5 flex flex-col justify-end z-10">
+        <div className="md:transform md:group-hover:-translate-y-2 transition-transform duration-500">
+          <h3 className="text-sm md:text-lg font-black uppercase italic tracking-tighter text-white mb-0.5 line-clamp-1 md:group-hover:line-clamp-none drop-shadow-md leading-tight">
             {movie.title}
           </h3>
-          <p className="text-[8px] md:text-[10px] text-gray-400 uppercase tracking-widest font-mono font-medium mb-3 drop-shadow-sm">
+          <p className="text-[7px] md:text-[10px] text-gray-400 uppercase tracking-widest font-mono font-medium mb-2 md:mb-3 drop-shadow-sm">
             {movie.genre[0]} • {movie.year}
           </p>
         </div>
         
-        {/* Actions - Slide up on hover */}
-        <div className="h-0 group-hover:h-10 opacity-0 group-hover:opacity-100 transition-all duration-500 flex gap-2 overflow-hidden">
+        {/* Actions - Visible on mobile, slide up on desktop hover */}
+        <div className="h-8 md:h-0 md:group-hover:h-10 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-500 flex gap-2 overflow-hidden">
           <button
-            onClick={(e) => { e.stopPropagation(); onPlay(movie); }}
-            className="flex-1 py-2 bg-red-600 text-white rounded-xl font-bold text-[10px] uppercase tracking-wider hover:bg-red-700 transition-all active:scale-95 flex items-center justify-center gap-1.5"
+            onClick={(e) => { e.stopPropagation(); onDownload(movie); }}
+            className="flex-1 py-1.5 md:py-2 bg-red-600 text-white rounded-lg md:rounded-xl font-bold text-[8px] md:text-[10px] uppercase tracking-wider hover:bg-red-700 transition-all active:scale-95 flex items-center justify-center gap-1 md:gap-1.5"
           >
-            <Play className="w-3 h-3 fill-white" />
-            Trailer
+            <Download className="w-2.5 h-2.5 md:w-3 h-3" />
+            Download
           </button>
           
           <button
-            onClick={(e) => { e.stopPropagation(); onBuy(movie); }}
-            className="flex-1 py-2 bg-white text-black rounded-xl font-bold text-[10px] uppercase tracking-wider hover:bg-gray-200 transition-all active:scale-95"
+            onClick={(e) => { e.stopPropagation(); isSubscribed ? onDownload(movie) : onBuy(movie); }}
+            className="flex-1 py-1.5 md:py-2 bg-white text-black rounded-lg md:rounded-xl font-bold text-[8px] md:text-[10px] uppercase tracking-wider hover:bg-gray-200 transition-all active:scale-95 shadow-xl"
           >
-            Get Pass
+            {isSubscribed ? 'Watch' : 'Pass'}
           </button>
         </div>
       </div>

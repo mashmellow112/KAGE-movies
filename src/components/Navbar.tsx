@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { Search, User as UserIcon, LogOut, Bell, Film } from 'lucide-react';
+import { Search, User as UserIcon, LogOut, Bell, Film, Crown } from 'lucide-react';
 import { auth, logOut } from '../lib/firebase';
 import { motion, AnimatePresence } from 'motion/react';
 import { User } from 'firebase/auth';
 
 interface NavbarProps {
   onSearch: (query: string) => void;
+  onUpgrade: () => void;
   user: User | null;
 }
 
-export default function Navbar({ onSearch, user }: NavbarProps) {
+export default function Navbar({ onSearch, onUpgrade, user }: NavbarProps) {
   const [showProfile, setShowProfile] = useState(false);
 
   return (
@@ -25,7 +26,15 @@ export default function Navbar({ onSearch, user }: NavbarProps) {
           />
         </div>
 
-        <div className="flex items-center gap-3 md:gap-6 ml-auto">
+        <div className="flex items-center gap-2 md:gap-6 ml-auto">
+          <button 
+            onClick={onUpgrade}
+            className="flex items-center gap-2 px-3 md:px-5 py-2 md:py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg md:rounded-xl text-[10px] md:text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-red-600/20"
+          >
+            <Crown className="w-3.5 h-3.5 md:w-3 md:h-3" />
+            <span className="hidden sm:inline">Upgrade</span>
+          </button>
+          
           <div className="hidden sm:flex items-center gap-2 px-4 md:px-6 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold uppercase tracking-widest text-white/60">
             <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
             {user?.displayName?.split(' ')[0]}

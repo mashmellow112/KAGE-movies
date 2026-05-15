@@ -11,9 +11,11 @@
 import React, { useState, useEffect } from 'react';
 import { auth } from './lib/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Splash from './components/Splash';
 import Auth from './components/Auth';
 import MainPage from './components/MainPage';
+import UnlimitedLibrary from './components/UnlimitedLibrary';
 import { AnimatePresence } from 'motion/react';
 
 export default function App() {
@@ -42,15 +44,21 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050505]">
-      <AnimatePresence mode="wait">
-        {!user ? (
-          <Auth key="auth" />
-        ) : (
-          <MainPage key="main" user={user} />
-        )}
-      </AnimatePresence>
-    </div>
+    <BrowserRouter>
+      <div className="min-h-screen bg-[#050505]">
+        <AnimatePresence mode="wait">
+          {!user ? (
+            <Auth key="auth" />
+          ) : (
+            <Routes>
+              <Route path="/" element={<MainPage user={user} />} />
+              <Route path="/unlimited" element={<UnlimitedLibrary user={user} />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          )}
+        </AnimatePresence>
+      </div>
+    </BrowserRouter>
   );
 }
 

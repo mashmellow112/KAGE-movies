@@ -24,11 +24,12 @@
         "phoneNumber": { "type": "string" },
         "provider": { "type": "string", "enum": ["airtel", "mtn"] },
         "amount": { "type": "number" },
+        "type": { "type": "string", "enum": ["unlimited_access"] },
         "status": { "type": "string", "enum": ["completed", "failed"] },
         "createdAt": { "type": "string", "format": "date-time" },
         "expiryDate": { "type": "string", "format": "date-time" }
       },
-      "required": ["userId", "phoneNumber", "provider", "amount", "status", "createdAt", "expiryDate"]
+      "required": ["userId", "phoneNumber", "provider", "amount", "type", "status", "createdAt", "expiryDate"]
     }
   },
   "firestore": {

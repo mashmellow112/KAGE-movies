@@ -3,13 +3,16 @@ import { motion, AnimatePresence } from 'motion/react';
 import Navbar from './Navbar';
 import MovieCard from './MovieCard';
 import PaymentModal from './PaymentModal';
+import SubscriptionModal from './SubscriptionModal';
 import MovieDetailModal from './MovieDetailModal';
+import DownloadModal from './DownloadModal';
 import { MOVIES } from '../constants/movies';
 import { Movie } from '../types';
-import { TrendingUp, Clock, Star, Film, Play, User as UserIcon, Lock } from 'lucide-react';
+import { TrendingUp, Clock, Star, Film, Play, User as UserIcon, Lock, ChevronRight, Crown, Download } from 'lucide-react';
 import { auth, db, OperationType, handleFirestoreError } from '../lib/firebase';
 import { User } from 'firebase/auth';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
 
 interface MainPageProps {
   user: User | null;
@@ -17,8 +20,12 @@ interface MainPageProps {
 
 export default function MainPage({ user }: MainPageProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [showPayment, setShowPayment] = useState(false);
+  const [showSubscription, setShowSubscription] = useState(false);
+  const [showDownload, setShowDownload] = useState(false);
+  const [downloadMovie, setDownloadMovie] = useState<Movie | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [activeTab, setActiveTab] = useState<'home' | 'hot' | 'favs' | 'me'>('home');
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -61,6 +68,11 @@ export default function MainPage({ user }: MainPageProps) {
 
   const handlePlayTrailer = (movie: Movie) => {
     window.open(movie.trailerUrl, '_blank');
+  };
+
+  const handleDownload = (movie: Movie) => {
+    setDownloadMovie(movie);
+    setShowDownload(true);
   };
 
   const handleBuyMovie = (movie: Movie) => {
@@ -115,7 +127,11 @@ export default function MainPage({ user }: MainPageProps) {
       </aside>
 
       <div className="flex-1 md:ml-20 flex flex-col">
-        <Navbar onSearch={setSearchQuery} user={user} />
+        <Navbar 
+          onSearch={setSearchQuery} 
+          onUpgrade={() => setShowSubscription(true)}
+          user={user} 
+        />
         
         <main className="pt-24 md:pt-28 px-4 md:px-8 pb-32 md:pb-20 max-w-7xl mx-auto w-full">
           {activeTab === 'me' ? (
@@ -143,7 +159,7 @@ export default function MainPage({ user }: MainPageProps) {
                     <MovieCard 
                       key={movie.id} 
                       movie={movie} 
-                      onPlay={(m) => handlePlayTrailer(m)}
+                      onDownload={(m) => handleDownload(m)}
                       onBuy={() => {}}
                       onClick={(m) => handleShowDetails(m)}
                       onFavorite={(m) => toggleFavorite(m.id)}
@@ -156,10 +172,10 @@ export default function MainPage({ user }: MainPageProps) {
                     <h4 className="text-xl font-bold text-white mb-2">No Active Subscription</h4>
                     <p className="font-bold italic text-sm text-center">Get a Monthly Pass to unlock all movies.</p>
                     <button 
-                      onClick={() => setActiveTab('home')}
+                      onClick={() => setShowSubscription(true)}
                       className="mt-6 px-10 py-4 bg-red-600 hover:bg-red-700 text-white border border-white/10 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all shadow-xl shadow-red-600/20"
                     >
-                      Get Monthly Pass
+                      Get Monthly Gold Pass
                     </button>
                   </div>
                 )}
@@ -167,6 +183,29 @@ export default function MainPage({ user }: MainPageProps) {
             </div>
           ) : (
             <>
+              {/* Gold Member Banner */}
+              {isSubscribed && activeTab === 'home' && (
+                <section className="mb-12">
+                   <div 
+                    onClick={() => navigate('/unlimited')}
+                    className="bg-gradient-to-r from-red-600 to-orange-500 p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] flex flex-col md:flex-row items-center justify-between gap-6 cursor-pointer group hover:scale-[1.01] transition-all shadow-2xl shadow-red-600/30 border border-white/20"
+                   >
+                     <div className="flex flex-col md:flex-row items-center text-center md:text-left gap-4 md:gap-8">
+                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 rounded-2xl md:rounded-3xl flex items-center justify-center backdrop-blur-xl shadow-lg">
+                          <Crown className="w-8 h-8 md:w-10 md:h-10 text-white" />
+                        </div>
+                        <div>
+                           <h3 className="text-2xl md:text-4xl font-black italic uppercase tracking-tighter mb-1">Gold Library Access</h3>
+                           <p className="text-white/80 text-xs md:text-sm font-bold uppercase tracking-widest">You have unlimited access to every movie in our catalog</p>
+                        </div>
+                     </div>
+                     <div className="w-full md:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-black/20 rounded-2xl font-black uppercase text-[11px] tracking-[0.2em] group-hover:bg-black/40 transition-colors border border-white/10">
+                        Enter Library <ChevronRight className="w-4 h-4" />
+                     </div>
+                   </div>
+                </section>
+              )}
+
               {/* Hero Section - Only show on home tab */}
               {activeTab === 'home' && searchQuery === '' && (
                 <section className="relative h-[300px] md:h-[450px] rounded-3xl md:rounded-[2.5rem] overflow-hidden mb-8 md:mb-12 group shadow-2xl">
@@ -174,7 +213,7 @@ export default function MainPage({ user }: MainPageProps) {
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(220,38,38,0.2),transparent)]" />
                   
                   <img 
-                    src="https://lk-aps.bmscdn.com/iedb/movies/images/mobile/listing/xxlarge/the-beekeeper-et00005199-11-01-2024-12-33-39.jpg" 
+                    src={MOVIES[0].posterUrl} 
                     className="absolute inset-0 w-full h-full object-cover opacity-60 transition-transform duration-1000 group-hover:scale-105"
                     alt="Hero Backdrop"
                   />
@@ -182,18 +221,18 @@ export default function MainPage({ user }: MainPageProps) {
                   <div className="absolute inset-0 flex flex-col justify-center px-6 md:px-12 z-20">
                     <span className="text-red-500 font-bold uppercase tracking-[0.2em] md:tracking-[0.3em] text-[10px] md:text-xs mb-2 md:mb-4">New Release</span>
                     <h2 className="text-4xl md:text-7xl font-black uppercase italic leading-[0.9] mb-4 md:mb-6 tracking-tighter text-white">
-                      THE <br className="hidden md:block" /> BEEKEEPER
+                      {MOVIES[0].title}
                     </h2>
                     <p className="max-w-xs md:max-w-md text-gray-400 text-xs md:text-base mb-6 md:mb-10 leading-relaxed line-clamp-3 md:line-clamp-none">
-                      One man's brutal campaign for vengeance takes on national stakes after he is revealed to be a former operative of a powerful and clandestine organization known as Beekeepers.
+                      {MOVIES[0].description}
                     </p>
                     <div className="flex flex-wrap gap-3 md:gap-4">
                       <button 
-                        onClick={() => handlePlayTrailer(MOVIES[0])}
+                        onClick={() => handleDownload(MOVIES[0])}
                         className="px-6 md:px-8 py-3 md:py-4 bg-red-600 hover:bg-red-700 text-white rounded-xl md:rounded-2xl font-bold flex items-center space-x-2 transition-all active:scale-95 text-sm"
                       >
-                        <Play className="w-4 h-4 fill-white" />
-                        <span>Trailer</span>
+                        <Download className="w-4 h-4" />
+                        <span>Download</span>
                       </button>
                       <button 
                         onClick={() => handleShowDetails(MOVIES[0])}
@@ -229,11 +268,12 @@ export default function MainPage({ user }: MainPageProps) {
                     <MovieCard 
                       key={movie.id} 
                       movie={movie} 
-                      onPlay={(m) => { handlePlayTrailer(m); }}
+                      onDownload={(m) => { handleDownload(m); }}
                       onBuy={(m) => { handleBuyMovie(m); }}
                       onClick={(m) => handleShowDetails(m)}
                       onFavorite={(m) => toggleFavorite(m.id)}
                       isFavorite={favorites.includes(movie.id)}
+                      isSubscribed={isSubscribed}
                     />
                   ))}
                 </div>
@@ -307,6 +347,15 @@ export default function MainPage({ user }: MainPageProps) {
           <span className={`text-[8px] font-bold uppercase ${activeTab === 'favs' ? 'text-white' : 'text-white/20'}`}>Favs</span>
         </button>
         <button 
+          onClick={() => setShowSubscription(true)}
+          className="flex flex-col items-center gap-1 active:scale-95 transition-transform -mt-8"
+        >
+          <div className="w-12 h-12 bg-red-600 rounded-2xl flex items-center justify-center shadow-lg shadow-red-600/40 border-2 border-white/20">
+            <Crown className="w-6 h-6 text-white" />
+          </div>
+          <span className="text-[8px] font-black uppercase text-red-500 mt-1">Gold</span>
+        </button>
+        <button 
           onClick={() => setActiveTab('me')}
           className="flex flex-col items-center gap-1 active:scale-95 transition-transform"
         >
@@ -319,7 +368,7 @@ export default function MainPage({ user }: MainPageProps) {
         isOpen={showDetails}
         onClose={() => setShowDetails(false)}
         movie={selectedMovie}
-        onPlay={handlePlayTrailer}
+        onDownload={handleDownload}
         onBuy={handleBuyMovie}
       />
 
@@ -327,6 +376,17 @@ export default function MainPage({ user }: MainPageProps) {
         isOpen={showPayment} 
         onClose={() => setShowPayment(false)} 
         movie={selectedMovie} 
+      />
+
+      <SubscriptionModal
+        isOpen={showSubscription}
+        onClose={() => setShowSubscription(false)}
+      />
+
+      <DownloadModal
+        isOpen={showDownload}
+        onClose={() => setShowDownload(false)}
+        movie={downloadMovie}
       />
     </div>
   );
