@@ -18,9 +18,52 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
   const [showControls, setShowControls] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const [showSettings, setShowSettings] = useState(false);
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isOpen) return;
+
+      switch (e.key.toLowerCase()) {
+        case ' ':
+        case 'k':
+          e.preventDefault();
+          togglePlay();
+          break;
+        case 'f':
+          e.preventDefault();
+          toggleFullscreen();
+          break;
+        case 'm':
+          e.preventDefault();
+          toggleMute();
+          break;
+        case 'arrowright':
+          e.preventDefault();
+          skip(10);
+          break;
+        case 'arrowleft':
+          e.preventDefault();
+          skip(-10);
+          break;
+        case 'escape':
+          if (document.fullscreenElement) {
+            document.exitFullscreen();
+          } else {
+            onClose();
+          }
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, isPlaying, isMuted, volume]);
 
   useEffect(() => {
     if (isOpen) {
@@ -118,6 +161,14 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
     }
   };
 
+  const changePlaybackSpeed = (speed: number) => {
+    setPlaybackSpeed(speed);
+    if (videoRef.current) {
+      videoRef.current.playbackRate = speed;
+    }
+    setShowSettings(false);
+  };
+
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
@@ -138,6 +189,7 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
 
   const getEmbedUrl = (url: string) => {
     try {
+      // YouTube
       let videoId = '';
       if (url.includes('v=')) {
         videoId = url.split('v=')[1]?.split('&')[0];
@@ -146,10 +198,24 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
       }
       
       if (videoId) {
-        // Adding origin parameter helps with some embed issues
         const origin = window.location.origin;
         return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1&origin=${origin}`;
       }
+
+      // Google Drive
+      if (url.includes('drive.google.com') || url.includes('docs.google.com')) {
+        let fileId = '';
+        if (url.includes('/d/')) {
+          fileId = url.split('/d/')[1]?.split('/')[0];
+        } else if (url.includes('id=')) {
+          fileId = url.split('id=')[1]?.split('&')[0];
+        }
+        
+        if (fileId) {
+          return `https://drive.google.com/file/d/${fileId}/preview`;
+        }
+      }
+      
       return url;
     } catch (e) {
       return url;
@@ -183,6 +249,17 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center overflow-hidden"
         >
+          {/* Enhanced Ambient Backdrop */}
+          <div 
+            className="absolute inset-0 z-0 opacity-40 blur-[100px] pointer-events-none scale-150"
+            style={{ 
+              backgroundImage: `url(${movie.posterUrl})`,
+              backgroundPosition: 'center',
+              backgroundSize: 'cover'
+            }}
+          />
+          <div className="absolute inset-0 bg-black/60 z-[1]" />
+
           {/* Top Bar - More prominent */}
           <div className={`absolute top-0 left-0 right-0 p-4 md:p-6 flex items-center justify-between z-30 bg-gradient-to-b from-black/95 via-black/70 to-transparent transition-opacity duration-500 ${showControls ? 'opacity-100' : 'opacity-0'}`}>
             <div className="flex items-center gap-4 md:gap-6 text-left overflow-hidden">
@@ -277,9 +354,20 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
                     e.stopPropagation();
                     togglePlay();
                   }}
+                  onDoubleClick={(e) => {
+                    e.stopPropagation();
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    if (x < rect.width / 2) {
+                      skip(-10);
+                    } else {
+                      skip(10);
+                    }
+                  }}
                   onPlaying={() => setIsLoading(false)}
                   onWaiting={() => setIsLoading(true)}
                   onCanPlay={() => setIsLoading(false)}
+                  onLoadedData={() => setIsLoading(false)}
                   onEnded={() => setIsPlaying(false)}
                 >
                   <source src={streamUrl} type="video/mp4" />
@@ -290,9 +378,12 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
                   src={getEmbedUrl(movie.trailerUrl)}
                   className="w-full h-full border-0 shadow-2xl transition-opacity duration-700"
                   onLoad={() => setIsLoading(false)}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allow="autoplay; encrypted-media; accelerometer; clipboard-write; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
+                  frameBorder="0"
+                  scrolling="no"
                   title={movie.title}
+                  style={{ border: 'none', display: 'block' }}
                 ></iframe>
               )}
             </div>
@@ -363,10 +454,45 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
                 </div>
                 
                 <div className="flex items-center justify-center gap-8 w-full md:w-auto">
-                  <div className="flex flex-col items-center cursor-pointer group" onClick={(e) => e.stopPropagation()}>
-                    <Settings className="w-5 h-5 md:w-6 md:h-6 text-white/70 group-hover:text-white group-hover:rotate-90 transition-all duration-500" />
-                    <span className="text-[8px] text-white/40 font-black uppercase mt-1 tracking-widest group-hover:text-white/60 transition-colors">Settings</span>
+                  <div className="relative">
+                    <div 
+                      className="flex flex-col items-center cursor-pointer group" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowSettings(!showSettings);
+                      }}
+                    >
+                      <Settings className={`w-5 h-5 md:w-6 md:h-6 text-white/70 group-hover:text-white transition-all duration-500 ${showSettings ? 'rotate-90 text-red-500' : ''}`} />
+                      <span className="text-[8px] text-white/40 font-black uppercase mt-1 tracking-widest group-hover:text-white/60 transition-colors">Settings</span>
+                    </div>
+                    
+                    {/* Settings Dropdown */}
+                    <AnimatePresence>
+                      {showSettings && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 10, scale: 0.9 }}
+                          className="absolute bottom-full right-0 mb-4 w-48 bg-black/90 backdrop-blur-2xl rounded-2xl border border-white/10 overflow-hidden shadow-2xl p-2 z-50"
+                        >
+                          <div className="px-3 py-2 border-b border-white/5">
+                            <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">Playback Speed</p>
+                          </div>
+                          {[0.5, 0.75, 1, 1.25, 1.5, 2].map((speed) => (
+                            <button
+                              key={speed}
+                              onClick={() => changePlaybackSpeed(speed)}
+                              className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-bold transition-all flex items-center justify-between ${playbackSpeed === speed ? 'bg-red-600 text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'}`}
+                            >
+                              <span>{speed === 1 ? 'Normal' : `${speed}x`}</span>
+                              {playbackSpeed === speed && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                            </button>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
+
                   <div className="flex flex-col items-center cursor-pointer group" onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }}>
                     <Maximize2 className="w-5 h-5 md:w-6 md:h-6 text-white/70 group-hover:text-white transition-all transform active:scale-90" />
                     <span className="text-[8px] text-white/40 font-black uppercase mt-1 tracking-widest group-hover:text-white/60 transition-colors">Fullscreen</span>

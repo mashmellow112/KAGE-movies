@@ -45,7 +45,7 @@ async function startServer() {
       
       // Load attributes with a fast timeout safety trigger
       const loadPromise = file.loadAttributes();
-      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Mega link timeout')), 15000));
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Mega link timeout')), 30000));
       
       await Promise.race([loadPromise, timeoutPromise]);
 

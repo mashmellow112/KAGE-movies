@@ -2,11 +2,22 @@ import { Movie } from '../types';
 
 export const MOVIES: Movie[] = [
   {
+    id: 'mgd1',
+    title: 'Shadow Hunter',
+    description: "An elite operative discovers a global conspiracy hidden within deep-web data structures. Now he must navigate the shadows to expose the truth before he becomes the next target.",
+    posterUrl: 'https://image.tmdb.org/t/p/original/rUL9Y191jUznQj9KiH6t0SafeS9.jpg',
+    trailerUrl: 'https://mega.nz/file/d7JHWY7T#i_Hfh5og3l4QcAy9LKAs95WQKCyPTD7bLEMdwEfIo4I',
+    price: 4000,
+    genre: ['Thriller', 'Action'],
+    rating: 8.9,
+    year: 2026
+  },
+  {
     id: 'm1',
     title: 'Last Bullet',
     description: "A retired elite assassin is forced back into action when his past comes calling, leading to a high-stakes game of survival where every bullet counts.",
     posterUrl: 'https://image.tmdb.org/t/p/original/qycPITRqXgPai7zj1gKffjCdSB5.jpg',
-    trailerUrl: 'https://mega.nz/file/d7JHWY7T#i_Hfh5og3l4QcAy9LKAs95WQKCyPTD7bLEMdwEfIo4I',
+    trailerUrl: 'https://drive.google.com/file/d/1xas5WkSTD10hbNM87rKlM0qfcAiPv1EM/view',
     downloadUrl: 'https://mega.nz/file/d7JHWY7T#i_Hfh5og3l4QcAy9LKAs95WQKCyPTD7bLEMdwEfIo4I',
     price: 4000,
     genre: ['Action', 'Thriller'],
