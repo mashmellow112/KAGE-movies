@@ -12,7 +12,16 @@ interface MoviePlayerProps {
 export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps) {
   if (!movie) return null;
 
-  // Convert YouTube link to embed link
+  // Convert Mega or YouTube link
+  const isMegaUrl = (url: string) => url.includes('mega.nz');
+  
+  const getStreamUrl = (url: string) => {
+    if (isMegaUrl(url)) {
+      return `/api/stream?url=${encodeURIComponent(url)}`;
+    }
+    return null;
+  };
+
   const getEmbedUrl = (url: string) => {
     try {
       let videoId = '';
@@ -33,6 +42,8 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
     }
   };
 
+  const streamUrl = getStreamUrl(movie.trailerUrl);
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -44,7 +55,7 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
         >
           {/* Top Bar - More prominent */}
           <div className="absolute top-0 left-0 right-0 p-6 flex items-center justify-between z-30 bg-gradient-to-b from-black/95 via-black/70 to-transparent">
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-6 text-left">
               <button 
                 onClick={onClose}
                 className="p-4 bg-white/10 hover:bg-red-600 rounded-full backdrop-blur-xl transition-all active:scale-90 border border-white/10 group"
@@ -78,14 +89,24 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
 
           {/* Video Container - Optimized for fill */}
           <div className="relative w-full h-full flex items-center justify-center bg-black">
-            <div className="w-full h-full max-w-full max-h-full">
-              <iframe
-                src={getEmbedUrl(movie.trailerUrl)}
-                className="w-full h-full border-0 shadow-2xl"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                title={movie.title}
-              ></iframe>
+            <div className="w-full h-full max-w-full max-h-full flex items-center justify-center">
+              {streamUrl ? (
+                <video
+                  src={streamUrl}
+                  className="w-full h-full max-h-screen object-contain"
+                  controls
+                  autoPlay
+                  playsInline
+                />
+              ) : (
+                <iframe
+                  src={getEmbedUrl(movie.trailerUrl)}
+                  className="w-full h-full border-0 shadow-2xl"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  title={movie.title}
+                ></iframe>
+              )}
             </div>
           </div>
 
