@@ -167,11 +167,11 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
     if (videoError) {
       if (videoError.code === 1) message = "Playback aborted by user.";
       if (videoError.code === 2) message = "Network error occurred while fetching the movie.";
-      if (videoError.code === 3) message = "Decoding error. Your browser might not support this file format (e.g. MKV).";
+      if (videoError.code === 3) message = "Decoding error. Your browser might not support this file format.";
       if (videoError.code === 4) message = "This movie format is not supported by your browser.";
     }
     
-    setError(`${message} Please try the 'Open in External Link' button or download the movie.`);
+    setError(`${message} The native desktop shell is initializing the pipeline. If loading stalls, please verify your server is awake.`);
   };
 
   return (
@@ -265,9 +265,11 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
               {streamUrl ? (
                 <video
                   ref={videoRef}
+                  id="movie-player"
                   className="w-full h-full max-h-screen object-contain"
                   autoPlay
                   playsInline
+                  preload="metadata"
                   onTimeUpdate={handleTimeUpdate}
                   onLoadedMetadata={handleLoadedMetadata}
                   onClick={(e) => {
@@ -281,7 +283,7 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
                   onError={handleVideoError}
                 >
                   <source src={streamUrl} type="video/mp4" />
-                  Your browser does not support native MP4 streaming video playback.
+                  Your desktop installation does not support native MP4 container decoding.
                 </video>
               ) : (
                 <iframe
