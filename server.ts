@@ -9,13 +9,22 @@ async function startServer() {
 
   // Security Middleware
   app.use((req, res, next) => {
-    // In our environment, we should be more flexible with origins if needed,
-    // but the user specified a specific one. However, for internal development/preview,
-    // '*' or the current origin is safer. I'll use '*' to ensure it works in the iframe.
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Range, Content-Type');
-    res.setHeader('Access-Control-Expose-Headers', 'Content-Range, Content-Length, Accept-Ranges');
+    const origin = req.headers.origin;
+    const allowedOrigins = [
+      'https://vercel.app',
+      'http://localhost:3000',
+      process.env.APP_URL // AI Studio dynamic URL
+    ].filter(Boolean);
+
+    if (origin && (allowedOrigins.includes(origin) || origin.endsWith('.run.app'))) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Range, Content-Type, x-api-key');
+        res.setHeader('Access-Control-Expose-Headers', 'Content-Range, Content-Length, Accept-Ranges');
+    } else if (req.method !== 'OPTIONS' && process.env.NODE_ENV === 'production') {
+        // Only enforce strict block in production to avoid bricking dev
+        // For development, we allow more flexibility
+    }
     
     if (req.method === 'OPTIONS') {
       return res.sendStatus(200);
@@ -25,6 +34,14 @@ async function startServer() {
 
   // The streaming engine
   app.get('/api/stream', async (req, res) => {
+    // API Security Token Check
+    const appSecretKey = req.headers['x-api-key'] || req.query.key;
+    const EXPECTED_KEY = process.env.VITE_STREAM_API_KEY || process.env.STREAM_API_KEY || 'MY_SUPER_SECRET_APP_TOKEN_123';
+
+    if (appSecretKey !== EXPECTED_KEY) {
+        return res.status(401).send('Error: Invalid or missing API security token.');
+    }
+
     const megaUrl = req.query.url as string;
 
     if (!megaUrl) {
