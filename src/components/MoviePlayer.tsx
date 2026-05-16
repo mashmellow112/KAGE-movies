@@ -127,7 +127,7 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
   
   const getStreamUrl = (url: string) => {
     if (isMegaUrl(url)) {
-      const key = import.meta.env.VITE_STREAM_API_KEY || 'MY_SUPER_SECRET_APP_TOKEN_123';
+      const key = import.meta.env.VITE_STREAM_API_KEY || 'KageSuperSecretToken2026!';
       return `/api/stream?url=${encodeURIComponent(url)}&key=${key}`;
     }
     return null;

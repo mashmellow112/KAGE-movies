@@ -36,7 +36,7 @@ async function startServer() {
   app.get('/api/stream', async (req, res) => {
     // API Security Token Check
     const appSecretKey = req.headers['x-api-key'] || req.query.key;
-    const EXPECTED_KEY = process.env.VITE_STREAM_API_KEY || process.env.STREAM_API_KEY || 'MY_SUPER_SECRET_APP_TOKEN_123';
+    const EXPECTED_KEY = process.env.VITE_STREAM_API_KEY || process.env.STREAM_API_KEY || 'KageSuperSecretToken2026!';
 
     if (appSecretKey !== EXPECTED_KEY) {
         return res.status(401).send('Error: Invalid or missing API security token.');
