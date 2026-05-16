@@ -38,7 +38,7 @@ export default function Splash({ onComplete }: SplashProps) {
           />
         </div>
         <h1 className="text-4xl font-bold tracking-tighter uppercase text-white mb-2">
-          Kage Movies
+          Kage-movies
         </h1>
         <p className="text-white/50 font-mono text-xs tracking-widest uppercase">
           Cinema evolved

@@ -9,9 +9,11 @@ interface MovieDetailModalProps {
   onClose: () => void;
   onDownload: (movie: Movie) => void;
   onBuy: (movie: Movie) => void;
+  onWatch: (movie: Movie) => void;
+  isSubscribed: boolean;
 }
 
-export default function MovieDetailModal({ movie, isOpen, onClose, onDownload, onBuy }: MovieDetailModalProps) {
+export default function MovieDetailModal({ movie, isOpen, onClose, onDownload, onBuy, onWatch, isSubscribed }: MovieDetailModalProps) {
   if (!movie) return null;
 
   return (
@@ -88,11 +90,11 @@ export default function MovieDetailModal({ movie, isOpen, onClose, onDownload, o
                     Download
                   </button>
                   <button
-                    onClick={() => onBuy(movie)}
+                    onClick={() => onWatch(movie)}
                     className="flex-1 h-14 md:h-16 bg-white text-black rounded-xl md:rounded-2xl font-black uppercase tracking-widest text-[10px] md:text-xs flex items-center justify-center gap-3 hover:bg-gray-200 transition-all active:scale-95 shadow-xl shadow-white/5"
                   >
-                    <ShoppingCart className="w-4 h-4" />
-                    Get Pass
+                    <Play className="w-4 h-4 fill-current" />
+                    Watch Now
                   </button>
                 </div>
               </div>

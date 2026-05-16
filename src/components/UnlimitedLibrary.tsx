@@ -6,6 +6,7 @@ import MovieCard from './MovieCard';
 import Navbar from './Navbar';
 import SubscriptionModal from './SubscriptionModal';
 import DownloadModal from './DownloadModal';
+import MoviePlayer from './MoviePlayer';
 import { auth } from '../lib/firebase';
 import { User } from 'firebase/auth';
 import { Crown, Sparkles, Filter, ChevronLeft, Download } from 'lucide-react';
@@ -19,12 +20,19 @@ export default function UnlimitedLibrary({ user }: UnlimitedLibraryProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSubscription, setShowSubscription] = useState(false);
   const [showDownload, setShowDownload] = useState(false);
+  const [showPlayer, setShowPlayer] = useState(false);
   const [downloadMovie, setDownloadMovie] = useState<Movie | null>(null);
+  const [watchingMovie, setWatchingMovie] = useState<Movie | null>(null);
   const navigate = useNavigate();
 
   const handleDownload = (movie: Movie) => {
     setDownloadMovie(movie);
     setShowDownload(true);
+  };
+
+  const handleWatchMovie = (movie: Movie) => {
+    setWatchingMovie(movie);
+    setShowPlayer(true);
   };
 
   const filteredMovies = MOVIES.filter(movie => 
@@ -64,7 +72,7 @@ export default function UnlimitedLibrary({ user }: UnlimitedLibraryProps) {
           
           <div className="flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-2 rounded-2xl">
             <Sparkles className="w-4 h-4 text-red-500" />
-            <span className="text-xs font-black uppercase tracking-widest">Kage Gold Member</span>
+            <span className="text-xs font-black uppercase tracking-widest">Kage-movies Gold Member</span>
           </div>
         </div>
 
@@ -81,6 +89,7 @@ export default function UnlimitedLibrary({ user }: UnlimitedLibraryProps) {
                  movie={movie}
                  onDownload={(m) => handleDownload(m)}
                  onBuy={() => {}}
+                 onWatch={(m) => handleWatchMovie(m)}
                  onClick={() => {}}
                  onFavorite={() => {}}
                  isFavorite={false}
@@ -107,6 +116,12 @@ export default function UnlimitedLibrary({ user }: UnlimitedLibraryProps) {
         isOpen={showDownload}
         onClose={() => setShowDownload(false)}
         movie={downloadMovie}
+      />
+
+      <MoviePlayer
+        isOpen={showPlayer}
+        onClose={() => setShowPlayer(false)}
+        movie={watchingMovie}
       />
     </div>
   );

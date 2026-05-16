@@ -7,13 +7,14 @@ interface MovieCardProps {
   movie: Movie;
   onDownload: (movie: Movie) => void;
   onBuy: (movie: Movie) => void;
+  onWatch: (movie: Movie) => void;
   onClick: (movie: Movie) => void;
   onFavorite: (movie: Movie) => void;
   isFavorite: boolean;
   isSubscribed?: boolean;
 }
 
-export default function MovieCard({ movie, onDownload, onBuy, onClick, onFavorite, isFavorite, isSubscribed }: MovieCardProps) {
+export default function MovieCard({ movie, onDownload, onBuy, onWatch, onClick, onFavorite, isFavorite, isSubscribed }: MovieCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
@@ -70,10 +71,10 @@ export default function MovieCard({ movie, onDownload, onBuy, onClick, onFavorit
           </button>
           
           <button
-            onClick={(e) => { e.stopPropagation(); isSubscribed ? onDownload(movie) : onBuy(movie); }}
+            onClick={(e) => { e.stopPropagation(); onWatch(movie); }}
             className="flex-1 py-1.5 md:py-2 bg-white text-black rounded-lg md:rounded-xl font-bold text-[8px] md:text-[10px] uppercase tracking-wider hover:bg-gray-200 transition-all active:scale-95 shadow-xl"
           >
-            {isSubscribed ? 'Watch' : 'Pass'}
+            Watch
           </button>
         </div>
       </div>

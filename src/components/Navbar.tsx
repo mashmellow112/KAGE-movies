@@ -20,7 +20,7 @@ export default function Navbar({ onSearch, onUpgrade, user }: NavbarProps) {
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 md:w-4 md:h-4 text-white/40 group-focus-within:text-red-500 transition-colors" />
           <input
             type="text"
-            placeholder="Search Kage..."
+            placeholder="Search Kage-movies..."
             onChange={(e) => onSearch(e.target.value)}
             className="bg-white/5 border border-white/10 rounded-xl md:rounded-2xl py-2.5 md:py-3 pl-10 md:pl-12 pr-4 w-full focus:outline-none focus:border-red-600/50 backdrop-blur-md transition-all text-xs md:text-sm"
           />
