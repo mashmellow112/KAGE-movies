@@ -129,8 +129,9 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
   
   const getStreamUrl = (url: string) => {
     if (isMegaUrl(url)) {
-      const key = import.meta.env.VITE_STREAM_API_KEY || 'KageSuperSecretToken2026!';
-      return `/api/stream?url=${encodeURIComponent(url)}&key=${key}`;
+      const apiKey = import.meta.env.VITE_STREAM_API_KEY || 'KageSuperSecretToken2026!';
+      const origin = window.location.origin;
+      return `${origin}/api/stream?url=${encodeURIComponent(url)}&key=${apiKey}`;
     }
     return null;
   };
@@ -264,7 +265,6 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
               {streamUrl ? (
                 <video
                   ref={videoRef}
-                  src={streamUrl}
                   className="w-full h-full max-h-screen object-contain"
                   autoPlay
                   playsInline
@@ -279,7 +279,10 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
                   onCanPlay={() => setIsLoading(false)}
                   onEnded={() => setIsPlaying(false)}
                   onError={handleVideoError}
-                />
+                >
+                  <source src={streamUrl} type="video/mp4" />
+                  Your browser does not support native MP4 streaming video playback.
+                </video>
               ) : (
                 <iframe
                   src={getEmbedUrl(movie.trailerUrl)}

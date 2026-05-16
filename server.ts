@@ -35,11 +35,12 @@ async function startServer() {
 
   // The streaming engine
   app.get('/api/stream', async (req, res) => {
-    // API Security Token Check
-    const appSecretKey = req.headers['x-api-key'] || req.query.key;
-    const EXPECTED_KEY = process.env.VITE_STREAM_API_KEY || process.env.STREAM_API_KEY || 'KageSuperSecretToken2026!';
+    // 1. Read the key from the URL parameters as suggested
+    const clientApiKey = req.query.key;
+    const systemApiKey = process.env.VITE_STREAM_API_KEY || process.env.STREAM_API_KEY || 'KageSuperSecretToken2026!';
 
-    if (appSecretKey !== EXPECTED_KEY) {
+    // 2. Block the request if the keys don't match or aren't set
+    if (!systemApiKey || clientApiKey !== systemApiKey) {
         return res.status(401).send('Error: Invalid or missing API security token.');
     }
 
