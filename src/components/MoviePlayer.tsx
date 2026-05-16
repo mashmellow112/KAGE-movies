@@ -269,7 +269,9 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
                   className="w-full h-full max-h-screen object-contain"
                   autoPlay
                   playsInline
-                  preload="metadata"
+                  webkitPlaysInline={true}
+                  preload="auto"
+                  crossOrigin="anonymous"
                   onTimeUpdate={handleTimeUpdate}
                   onLoadedMetadata={handleLoadedMetadata}
                   onClick={(e) => {
@@ -280,10 +282,9 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
                   onWaiting={() => setIsLoading(true)}
                   onCanPlay={() => setIsLoading(false)}
                   onEnded={() => setIsPlaying(false)}
-                  onError={handleVideoError}
                 >
                   <source src={streamUrl} type="video/mp4" />
-                  Your desktop installation does not support native MP4 container decoding.
+                  Your desktop installation container framework does not support direct hardware decoding.
                 </video>
               ) : (
                 <iframe
