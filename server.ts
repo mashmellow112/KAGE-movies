@@ -10,25 +10,17 @@ async function startServer() {
   // Security Middleware
   app.use((req, res, next) => {
     const origin = req.headers.origin;
-    const allowedOrigins = [
-      'https://vercel.app',
-      'https://kage-movies.vercel.app',
-      'http://localhost:3000',
-      process.env.APP_URL // AI Studio dynamic URL
-    ].filter(Boolean);
-
-    if (origin && (allowedOrigins.includes(origin) || origin.endsWith('.run.app') || origin.endsWith('.vercel.app'))) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
+    
+    // Explicitly approve requests coming from Vercel, Localhost testing, or headless file containers
+    if (!origin || origin.includes('vercel.app') || origin.includes('localhost') || origin.startsWith('file://') || origin.endsWith('.run.app')) {
+        res.setHeader('Access-Control-Allow-Origin', origin || '*');
         res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
         res.setHeader('Access-Control-Allow-Headers', 'Range, Content-Type, x-api-key');
         res.setHeader('Access-Control-Expose-Headers', 'Content-Range, Content-Length, Accept-Ranges');
-    } else if (req.method !== 'OPTIONS' && process.env.NODE_ENV === 'production') {
-        // Only enforce strict block in production to avoid bricking dev
-        // For development, we allow more flexibility
     }
     
     if (req.method === 'OPTIONS') {
-      return res.sendStatus(200);
+        return res.sendStatus(200);
     }
     next();
   });
@@ -62,43 +54,35 @@ async function startServer() {
 
       const fileSize = file.size;
       const range = req.headers.range;
-      const fileName = file.name || 'movie';
-      // Browsers often support webm better than mkv directly, even though they share similar container structures
-      const contentType = fileName.endsWith('.mkv') ? 'video/webm' : 'video/mp4';
+      
+      // Explicitly force modern streaming configurations
+      const contentType = 'video/mp4'; 
 
-      console.log(`[Stream] Sending: ${fileName} as ${contentType} (${fileSize} bytes)`);
-
-      // Stream chunks so video can seek/fast-forward instantly
       if (range) {
-        const parts = range.replace(/bytes=/, "").split("-");
-        const start = parseInt(parts[0], 10);
-        const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
-        
-        if (start >= fileSize) {
-            res.status(416).send('Requested range not satisfiable');
-            return;
-        }
+          const parts = range.replace(/bytes=/, "").split("-");
+          const start = parseInt(parts[0], 10);
+          const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+          const chunksize = (end - start) + 1;
 
-        const chunksize = (end - start) + 1;
+          // Desktop players require exact code instructions to handle timeline seeking
+          res.writeHead(206, {
+              'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+              'Accept-Ranges': 'bytes',
+              'Content-Length': chunksize,
+              'Content-Type': contentType,
+              'Connection': 'keep-alive'
+          });
 
-        res.writeHead(206, {
-          'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-          'Accept-Ranges': 'bytes',
-          'Content-Length': chunksize,
-          'Content-Type': contentType,
-          'Cache-Control': 'no-cache'
-        });
-
-        const megaStream = file.download({ start, end });
-        megaStream.pipe(res);
+          const megaStream = file.download({ start, end });
+          megaStream.pipe(res);
       } else {
-        res.writeHead(200, {
-          'Content-Length': fileSize,
-          'Content-Type': contentType,
-          'Cache-Control': 'no-cache'
-        });
-        const megaStream = file.download({});
-        megaStream.pipe(res);
+          res.writeHead(200, {
+              'Content-Length': fileSize,
+              'Content-Type': contentType,
+              'Connection': 'keep-alive'
+          });
+          const megaStream = file.download({});
+          megaStream.pipe(res);
       }
     } catch (error: any) {
       console.error('Stream failure:', error.message);
