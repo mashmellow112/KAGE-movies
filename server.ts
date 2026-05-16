@@ -2,10 +2,16 @@ import express from 'express';
 import { File } from 'megajs';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
+import mime from 'mime-types';
 
 async function startServer() {
   const app = express();
   const PORT = 3000;
+
+  // Global error handler for the process to prevent crashes on stream breaks
+  process.on('uncaughtException', (err) => {
+    console.error('🔥 Uncaught Exception:', err);
+  });
 
   // Security Middleware
   app.use((req, res, next) => {
@@ -37,58 +43,87 @@ async function startServer() {
         return res.status(400).send('Error: Missing video URL.');
     }
 
-    console.log(`🎬 Attempting to stream Mega file: ${megaUrl}`);
+    console.log(`🎬 Request for Mega file: ${megaUrl}`);
 
     try {
       // 2. Initialize Mega File Handler
       const file = File.fromURL(megaUrl);
       
-      // Load attributes with a fast timeout safety trigger
+      // Load attributes with a slightly longer timeout for reliability
       const loadPromise = file.loadAttributes();
-      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Mega link timeout')), 30000));
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Mega link handshake timed out')), 45000));
       
       await Promise.race([loadPromise, timeoutPromise]);
 
       const fileSize = file.size;
+      const fileName = file.name || 'video.mp4';
       const range = req.headers.range;
-      const contentType = 'video/mp4'; // Standard high-compatibility container
+      
+      // Dynamic Mime Type detection based on file extension
+      const contentType = mime.lookup(fileName) || 'video/mp4'; 
+
+      console.log(`🎥 File: ${fileName}, Size: ${fileSize}, Mime: ${contentType}`);
+
+      // Handle connection close to destroy the stream
+      let megaStream: any = null;
+      res.on('close', () => {
+        if (megaStream && megaStream.destroy) {
+          console.log(`🔌 Connection closed, destroying stream for ${fileName}`);
+          megaStream.destroy();
+        }
+      });
 
       // 3. Handle Media Range Bytes (For Instant Loading and Seeking)
       if (range) {
           const parts = range.replace(/bytes=/, "").split("-");
           const start = parseInt(parts[0], 10);
           const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
-          const chunksize = (end - start) + 1;
+          
+          if (start >= fileSize) {
+            return res.status(416).send('Requested range not satisfiable');
+          }
 
-          console.log(`📦 Streaming partial range chunk: ${start}-${end}/${fileSize}`);
+          const chunksize = (end - start) + 1;
+          console.log(`📦 Range: ${start}-${end}/${fileSize} (${chunksize} bytes)`);
 
           res.writeHead(206, {
               'Content-Range': `bytes ${start}-${end}/${fileSize}`,
               'Accept-Ranges': 'bytes',
               'Content-Length': chunksize,
               'Content-Type': contentType,
-              'Cache-Control': 'no-cache'
+              'Cache-Control': 'no-cache',
+              'Connection': 'keep-alive'
           });
 
-          const megaStream = file.download({ start, end });
-          megaStream.on('error', (err) => console.error("❌ Mega download stream error:", err));
+          megaStream = file.download({ start, end });
+          megaStream.on('error', (err: any) => {
+            console.error("❌ Mega range stream error:", err);
+            if (!res.headersSent) res.status(500).end();
+          });
           megaStream.pipe(res);
       } else {
-          console.log(`🚀 Streaming complete file layout size: ${fileSize}`);
+          console.log(`🚀 Full Stream Strategy: ${fileSize} bytes`);
           
           res.writeHead(200, {
               'Content-Length': fileSize,
               'Content-Type': contentType,
-              'Accept-Ranges': 'bytes'
+              'Accept-Ranges': 'bytes',
+              'Connection': 'keep-alive',
+              'Cache-Control': 'public, max-age=3600'
           });
 
-          const megaStream = file.download({});
-          megaStream.on('error', (err) => console.error("❌ Mega download stream error:", err));
+          megaStream = file.download();
+          megaStream.on('error', (err: any) => {
+            console.error("❌ Mega full stream error:", err);
+            if (!res.headersSent) res.status(500).end();
+          });
           megaStream.pipe(res);
       }
     } catch (error: any) {
-      console.error('💥 Backend Stream Crash Error:', error);
-      res.status(500).send(`Streaming handshake failed: ${error.message}`);
+      console.error('💥 Backend Stream Crash:', error.message);
+      if (!res.headersSent) {
+        res.status(500).send(`Handshake failed: ${error.message}`);
+      }
     }
   });
 

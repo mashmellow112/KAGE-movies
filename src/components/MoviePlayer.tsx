@@ -233,11 +233,11 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
     if (videoError) {
       if (videoError.code === 1) message = "Playback aborted by user.";
       if (videoError.code === 2) message = "Network error occurred while fetching the movie.";
-      if (videoError.code === 3) message = "Decoding error. Your browser might not support this file format.";
+      if (videoError.code === 3) message = "Decoding error. Your browser might not support this file's codec (e.g. Hevc/MKV).";
       if (videoError.code === 4) message = "This movie format is not supported by your browser.";
     }
     
-    setError(`${message} The native desktop shell is initializing the pipeline. If loading stalls, please verify your server is awake.`);
+    setError(`${message} Sometimes desktop apps have better codec support than browsers.`);
   };
 
   return (
