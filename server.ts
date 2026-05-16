@@ -52,17 +52,32 @@ async function startServer() {
     try {
       // Connect to Mega anonymously using your public file link
       const file = File.fromURL(megaUrl);
-      await file.loadAttributes();
+      
+      // Add a timeout to loadAttributes to prevent hanging
+      const loadPromise = file.loadAttributes();
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Mega link timeout')), 15000));
+      
+      await Promise.race([loadPromise, timeoutPromise]);
 
       const fileSize = file.size;
       const range = req.headers.range;
-      const contentType = megaUrl.includes('.mkv') ? 'video/x-matroska' : 'video/mp4';
+      const fileName = file.name || 'movie';
+      // Browsers often support webm better than mkv directly, even though they share similar container structures
+      const contentType = fileName.endsWith('.mkv') ? 'video/webm' : 'video/mp4';
+
+      console.log(`[Stream] Sending: ${fileName} as ${contentType} (${fileSize} bytes)`);
 
       // Stream chunks so video can seek/fast-forward instantly
       if (range) {
         const parts = range.replace(/bytes=/, "").split("-");
         const start = parseInt(parts[0], 10);
         const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+        
+        if (start >= fileSize) {
+            res.status(416).send('Requested range not satisfiable');
+            return;
+        }
+
         const chunksize = (end - start) + 1;
 
         res.writeHead(206, {
@@ -70,6 +85,7 @@ async function startServer() {
           'Accept-Ranges': 'bytes',
           'Content-Length': chunksize,
           'Content-Type': contentType,
+          'Cache-Control': 'no-cache'
         });
 
         const megaStream = file.download({ start, end });
@@ -78,13 +94,14 @@ async function startServer() {
         res.writeHead(200, {
           'Content-Length': fileSize,
           'Content-Type': contentType,
+          'Cache-Control': 'no-cache'
         });
         const megaStream = file.download({});
         megaStream.pipe(res);
       }
-    } catch (error) {
-      console.error('Stream failure:', error);
-      res.status(500).send('Streaming server error.');
+    } catch (error: any) {
+      console.error('Stream failure:', error.message);
+      res.status(500).send(`Streaming server error: ${error.message}`);
     }
   });
 

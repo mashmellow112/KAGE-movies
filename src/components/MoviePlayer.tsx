@@ -157,9 +157,20 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
 
   const streamUrl = getStreamUrl(movie.trailerUrl);
 
-  const handleVideoError = () => {
+  const handleVideoError = (e: any) => {
+    const videoError = videoRef.current?.error;
+    console.error("Video Playback Error:", videoError);
     setIsLoading(false);
-    setError("Unable to play this movie in the current player. Please use the 'Open in External Link' button or download the movie.");
+    
+    let message = "Unable to play this movie in the current player.";
+    if (videoError) {
+      if (videoError.code === 1) message = "Playback aborted by user.";
+      if (videoError.code === 2) message = "Network error occurred while fetching the movie.";
+      if (videoError.code === 3) message = "Decoding error. Your browser might not support this file format (e.g. MKV).";
+      if (videoError.code === 4) message = "This movie format is not supported by your browser.";
+    }
+    
+    setError(`${message} Please try the 'Open in External Link' button or download the movie.`);
   };
 
   return (
@@ -227,21 +238,21 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
             {/* Error Overlay */}
             {error && (
               <div className="absolute inset-0 z-[40] flex flex-col items-center justify-center bg-black/95 p-8 text-center backdrop-blur-xl">
-                <div className="w-20 h-20 bg-red-600/20 rounded-full flex items-center justify-center mb-8 border border-red-600/30">
-                  <X className="w-10 h-10 text-red-600" />
+                <div className="w-16 h-16 md:w-20 md:h-20 bg-red-600/20 rounded-full flex items-center justify-center mb-6 md:mb-8 border border-red-600/30">
+                  <X className="w-8 h-8 md:w-10 md:h-10 text-red-600" />
                 </div>
-                <h4 className="text-white font-black italic uppercase tracking-tighter text-2xl mb-4">Playback Error</h4>
-                <p className="text-white/60 text-sm max-w-md mb-8 leading-relaxed">{error}</p>
-                <div className="flex flex-col sm:flex-row gap-4">
+                <h4 className="text-white font-black italic uppercase tracking-tighter text-xl md:text-2xl mb-4">Playback Error</h4>
+                <p className="text-white/60 text-xs md:text-sm max-w-md mb-8 leading-relaxed px-4">{error}</p>
+                <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto px-6">
                   <button 
                     onClick={() => window.open(movie.trailerUrl, '_blank')}
-                    className="px-10 py-5 bg-red-600 text-white rounded-2xl font-black uppercase text-[10px] tracking-[0.3em] hover:bg-red-700 transition-all active:scale-95 shadow-xl shadow-red-600/30"
+                    className="w-full sm:w-auto px-10 py-5 bg-red-600 text-white rounded-2xl font-black uppercase text-[10px] tracking-[0.3em] hover:bg-red-700 transition-all active:scale-95 shadow-xl shadow-red-600/30"
                   >
                     Open External Link
                   </button>
                   <button 
                     onClick={onClose}
-                    className="px-10 py-5 bg-white/5 text-white/60 rounded-2xl font-black uppercase text-[10px] tracking-[0.3em] hover:bg-white/10 transition-all"
+                    className="w-full sm:w-auto px-10 py-5 bg-white/5 text-white/60 rounded-2xl font-black uppercase text-[10px] tracking-[0.3em] hover:bg-white/10 transition-all"
                   >
                     Close Player
                   </button>
@@ -272,7 +283,8 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
               ) : (
                 <iframe
                   src={getEmbedUrl(movie.trailerUrl)}
-                  className="w-full h-full border-0 shadow-2xl"
+                  className="w-full h-full border-0 shadow-2xl transition-opacity duration-700"
+                  onLoad={() => setIsLoading(false)}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
                   title={movie.title}
