@@ -165,53 +165,55 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
           className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center overflow-hidden"
         >
           {/* Top Bar - More prominent */}
-          <div className={`absolute top-0 left-0 right-0 p-6 flex items-center justify-between z-30 bg-gradient-to-b from-black/95 via-black/70 to-transparent transition-opacity duration-500 ${showControls ? 'opacity-100' : 'opacity-0'}`}>
-            <div className="flex items-center gap-6 text-left">
+          <div className={`absolute top-0 left-0 right-0 p-4 md:p-6 flex items-center justify-between z-30 bg-gradient-to-b from-black/95 via-black/70 to-transparent transition-opacity duration-500 ${showControls ? 'opacity-100' : 'opacity-0'}`}>
+            <div className="flex items-center gap-4 md:gap-6 text-left overflow-hidden">
               <button 
                 onClick={onClose}
-                className="p-4 bg-white/10 hover:bg-red-600 rounded-full backdrop-blur-xl transition-all active:scale-90 border border-white/10 group"
+                className="p-3 md:p-4 bg-white/10 hover:bg-red-600 rounded-full backdrop-blur-xl transition-all active:scale-90 border border-white/10 group flex-shrink-0"
               >
-                <X className="w-8 h-8 text-white group-hover:rotate-90 transition-transform duration-300" />
+                <X className="w-6 h-6 md:w-8 md:h-8 text-white group-hover:rotate-90 transition-transform duration-300" />
               </button>
-              <div className="space-y-1">
-                <h3 className="text-white font-black italic uppercase tracking-tighter text-2xl md:text-3xl drop-shadow-2xl">
+              <div className="space-y-0.5 md:space-y-1 truncate">
+                <h3 className="text-white font-black italic uppercase tracking-tighter text-lg md:text-3xl drop-shadow-2xl truncate">
                   {movie.title}
                 </h3>
-                <div className="flex items-center gap-3">
-                  <span className="text-red-500 text-[10px] font-black uppercase tracking-[0.3em]">Playing Now</span>
-                  <p className="text-white/60 text-[10px] font-bold uppercase tracking-[0.2em] px-2 py-0.5 bg-white/5 rounded border border-white/10">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <span className="text-red-500 text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em]">Playing Now</span>
+                  <p className="text-white/60 text-[8px] md:text-[10px] font-bold uppercase tracking-[0.1em] md:tracking-[0.2em] px-1.5 py-0.5 bg-white/5 rounded border border-white/10 truncate max-w-[150px] md:max-w-none">
                     {movie.genre.join(' • ')}
                   </p>
-                  <span className="text-white/40 text-[10px] font-bold">({movie.year})</span>
                 </div>
               </div>
             </div>
             
-            <div className="hidden md:flex items-center gap-4">
+            <div className="hidden sm:flex items-center gap-4">
               <div className="flex flex-col items-end">
                 <span className="text-white font-black text-xs uppercase tracking-widest leading-none mb-1">ULTRA HD</span>
                 <span className="text-red-500 font-bold text-[8px] uppercase tracking-widest">Dolby Atmos</span>
               </div>
               <div 
                 onClick={togglePlay}
-                className="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-600/40 border border-white/20 cursor-pointer hover:scale-105 transition-transform"
+                className="w-10 h-10 md:w-12 md:h-12 bg-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-600/40 border border-white/20 cursor-pointer hover:scale-105 transition-transform"
               >
                 {isPlaying ? (
-                  <Pause className="w-6 h-6 text-white fill-current" />
+                  <Pause className="w-5 h-5 md:w-6 md:h-6 text-white fill-current" />
                 ) : (
-                  <Play className="w-6 h-6 text-white fill-current" />
+                  <Play className="w-5 h-5 md:w-6 md:h-6 text-white fill-current" />
                 )}
               </div>
             </div>
           </div>
 
           {/* Video Container - Optimized for fill */}
-          <div className="relative w-full h-full flex items-center justify-center bg-black group/video">
+          <div 
+            className="relative w-full h-full flex items-center justify-center bg-black group/video"
+            onClick={() => setShowControls(true)}
+          >
             {/* Loading Spinner Overaly */}
             {streamUrl && isLoading && (
               <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm">
-                <div className="w-16 h-16 border-4 border-white/10 border-t-red-600 rounded-full animate-spin shadow-[0_0_20px_rgba(220,38,38,0.3)]"></div>
-                <p className="mt-6 text-white font-black italic uppercase tracking-[0.3em] text-sm animate-pulse">Loading Movie...</p>
+                <div className="w-12 h-12 md:w-16 md:h-16 border-4 border-white/10 border-t-red-600 rounded-full animate-spin shadow-[0_0_20px_rgba(220,38,38,0.3)]"></div>
+                <p className="mt-4 md:mt-6 text-white font-black italic uppercase tracking-[0.3em] text-xs md:text-sm animate-pulse">Loading Movie...</p>
               </div>
             )}
 
@@ -225,10 +227,14 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
                   playsInline
                   onTimeUpdate={handleTimeUpdate}
                   onLoadedMetadata={handleLoadedMetadata}
-                  onClick={togglePlay}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    togglePlay();
+                  }}
                   onPlaying={() => setIsLoading(false)}
                   onWaiting={() => setIsLoading(true)}
                   onCanPlay={() => setIsLoading(false)}
+                  onEnded={() => setIsPlaying(false)}
                 />
               ) : (
                 <iframe
@@ -243,54 +249,56 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
           </div>
 
           {/* Bottom Controls Overlay - Better visibility on hover and touch */}
-          <div className={`absolute bottom-0 left-0 right-0 p-8 md:p-12 z-30 bg-gradient-to-t from-black/95 via-black/60 to-transparent transition-opacity duration-500 ${showControls ? 'opacity-100' : 'opacity-0'}`}>
-            <div className="max-w-6xl mx-auto space-y-8">
-              {/* Progress Bar */}
+          <div className={`absolute bottom-0 left-0 right-0 p-6 md:p-12 z-30 bg-gradient-to-t from-black/95 via-black/60 to-transparent transition-opacity duration-500 ${showControls ? 'opacity-100' : 'opacity-0'}`}>
+            <div className="max-w-6xl mx-auto space-y-6 md:space-y-8">
+              {/* Progress Bar Container with larger hit area */}
               <div 
+                className="group/progress-container py-4 -my-4 cursor-pointer"
                 onClick={handleSeek}
-                className="relative h-1.5 w-full bg-white/10 rounded-full overflow-visible group/progress cursor-pointer"
               >
-                <div 
-                  className="absolute top-0 left-0 h-full bg-red-600 rounded-full shadow-[0_0_15px_rgba(220,38,38,0.5)]" 
-                  style={{ width: `${(currentTime / duration) * 100}%` }}
-                />
-                <div 
-                  className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 bg-white rounded-full shadow-2xl scale-0 group-hover/progress:scale-100 transition-transform border-2 border-red-600"
-                  style={{ left: `${(currentTime / duration) * 100}%` }}
-                />
+                <div className="relative h-1.5 md:h-2 w-full bg-white/10 rounded-full overflow-visible">
+                  <div 
+                    className="absolute top-0 left-0 h-full bg-red-600 rounded-full shadow-[0_0_15px_rgba(220,38,38,0.5)]" 
+                    style={{ width: `${(currentTime / duration) * 100}%` }}
+                  />
+                  <div 
+                    className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 bg-white rounded-full shadow-2xl scale-100 md:scale-0 group-hover/progress-container:scale-100 transition-transform border-2 border-red-600"
+                    style={{ left: `${(currentTime / duration) * 100}%` }}
+                  />
+                </div>
               </div>
               
-              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                <div className="flex items-center gap-10">
-                  <div className="flex items-center gap-8">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
+                <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10 w-full md:w-auto">
+                  <div className="flex items-center justify-center gap-8 w-full md:w-auto">
                     <SkipBack 
-                      onClick={() => skip(-10)}
-                      className="w-7 h-7 text-white/70 cursor-pointer hover:text-white transition-all transform active:scale-90" 
+                      onClick={(e) => { e.stopPropagation(); skip(-10); }}
+                      className="w-8 h-8 md:w-7 md:h-7 text-white/70 cursor-pointer hover:text-white transition-all transform active:scale-90" 
                     />
                     <button 
-                      onClick={togglePlay}
-                      className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 active:scale-95 transition-all text-white shadow-xl shadow-red-600/30 border-2 border-white/20"
+                      onClick={(e) => { e.stopPropagation(); togglePlay(); }}
+                      className="w-14 h-14 md:w-16 md:h-16 bg-red-600 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 active:scale-95 transition-all text-white shadow-xl shadow-red-600/30 border-2 border-white/20 flex-shrink-0"
                     >
                       {isPlaying ? (
-                        <Pause className="w-8 h-8 fill-current translate-x-[1px]" />
+                        <Pause className="w-6 h-6 md:w-8 md:h-8 fill-current" />
                       ) : (
-                        <Play className="w-8 h-8 fill-current translate-x-[1px]" />
+                        <Play className="w-6 h-6 md:w-8 md:h-8 fill-current translate-x-[1px]" />
                       )}
                     </button>
                     <SkipForward 
-                      onClick={() => skip(10)}
-                      className="w-7 h-7 text-white/70 cursor-pointer hover:text-white transition-all transform active:scale-90" 
+                      onClick={(e) => { e.stopPropagation(); skip(10); }}
+                      className="w-8 h-8 md:w-7 md:h-7 text-white/70 cursor-pointer hover:text-white transition-all transform active:scale-90" 
                     />
                   </div>
                   
-                  <div className="flex items-center gap-6">
+                  <div className="flex items-center justify-between md:justify-start gap-4 md:gap-6 w-full md:w-auto">
                     <div className="flex items-center gap-3">
-                      <div onClick={toggleMute} className="cursor-pointer text-white/70 hover:text-white">
-                        {isMuted || volume === 0 ? <VolumeX className="w-6 h-6" /> : volume < 0.5 ? <Volume1 className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
+                      <div onClick={(e) => { e.stopPropagation(); toggleMute(); }} className="cursor-pointer text-white/70 hover:text-white flex-shrink-0">
+                        {isMuted || volume === 0 ? <VolumeX className="w-5 h-5 md:w-6 md:h-6" /> : volume < 0.5 ? <Volume1 className="w-5 h-5 md:w-6 md:h-6" /> : <Volume2 className="w-5 h-5 md:w-6 md:h-6" />}
                       </div>
                       <div 
-                        onClick={handleVolumeChange}
-                        className="w-32 h-1.5 bg-white/10 rounded-full relative overflow-hidden group/volume cursor-pointer"
+                        onClick={(e) => { e.stopPropagation(); handleVolumeChange(e); }}
+                        className="hidden xs:block w-24 md:w-32 h-1.5 bg-white/10 rounded-full relative overflow-hidden group/volume cursor-pointer"
                       >
                         <div 
                           className="absolute top-0 left-0 h-full bg-white rounded-full group-hover/volume:bg-red-500 transition-colors" 
@@ -298,20 +306,20 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
                         />
                       </div>
                     </div>
-                    <div className="text-white/80 font-mono text-sm tracking-wider tabular-nums bg-black/40 px-3 py-1.5 rounded-lg border border-white/5 backdrop-blur-md">
+                    <div className="text-white/80 font-mono text-xs md:text-sm tracking-wider tabular-nums bg-black/40 px-3 py-1.5 rounded-lg border border-white/5 backdrop-blur-md flex-shrink-0">
                       {formatTime(currentTime)} <span className="text-white/20 px-1">/</span> {formatTime(duration)}
                     </div>
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-8">
-                  <div className="flex flex-col items-center">
-                    <Settings className="w-6 h-6 text-white/70 cursor-pointer hover:text-white hover:rotate-90 transition-all duration-500" />
-                    <span className="text-[8px] text-white/40 font-black uppercase mt-1 tracking-widest">Settings</span>
+                <div className="flex items-center justify-center gap-8 w-full md:w-auto">
+                  <div className="flex flex-col items-center cursor-pointer group" onClick={(e) => e.stopPropagation()}>
+                    <Settings className="w-5 h-5 md:w-6 md:h-6 text-white/70 group-hover:text-white group-hover:rotate-90 transition-all duration-500" />
+                    <span className="text-[8px] text-white/40 font-black uppercase mt-1 tracking-widest group-hover:text-white/60 transition-colors">Settings</span>
                   </div>
-                  <div className="flex flex-col items-center" onClick={toggleFullscreen}>
-                    <Maximize2 className="w-6 h-6 text-white/70 cursor-pointer hover:text-white transition-all transform active:scale-90" />
-                    <span className="text-[8px] text-white/40 font-black uppercase mt-1 tracking-widest">Fullscreen</span>
+                  <div className="flex flex-col items-center cursor-pointer group" onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }}>
+                    <Maximize2 className="w-5 h-5 md:w-6 md:h-6 text-white/70 group-hover:text-white transition-all transform active:scale-90" />
+                    <span className="text-[8px] text-white/40 font-black uppercase mt-1 tracking-widest group-hover:text-white/60 transition-colors">Fullscreen</span>
                   </div>
                 </div>
               </div>

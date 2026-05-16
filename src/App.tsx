@@ -16,6 +16,7 @@ import Splash from './components/Splash';
 import Auth from './components/Auth';
 import MainPage from './components/MainPage';
 import UnlimitedLibrary from './components/UnlimitedLibrary';
+import InstallPrompt from './components/InstallPrompt';
 import { AnimatePresence } from 'motion/react';
 
 export default function App() {
@@ -57,6 +58,7 @@ export default function App() {
             </Routes>
           )}
         </AnimatePresence>
+        <InstallPrompt />
       </div>
     </BrowserRouter>
   );
