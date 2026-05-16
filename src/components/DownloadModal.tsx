@@ -47,13 +47,16 @@ export default function DownloadModal({ isOpen, onClose, movie }: DownloadModalP
               <div className="space-y-3">
                 <button
                   onClick={() => {
-                    // Simulate download start
-                    alert("Download started! Check your storage.");
+                    if (movie.trailerUrl) {
+                      window.open(movie.trailerUrl, '_blank');
+                    } else {
+                      alert("Download link not available.");
+                    }
                     onClose();
                   }}
                   className="w-full py-5 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-black uppercase tracking-[0.3em] text-[10px] transition-all active:scale-95 shadow-xl shadow-red-600/20 flex items-center justify-center gap-3"
                 >
-                  Confirm Download <Download className="w-4 h-4" />
+                  Download via Mega <Download className="w-4 h-4" />
                 </button>
                 
                 <button

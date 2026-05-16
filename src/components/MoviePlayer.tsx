@@ -17,6 +17,7 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
   const [isMuted, setIsMuted] = useState(false);
   const [showControls, setShowControls] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -26,6 +27,7 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
       setIsPlaying(true);
       setCurrentTime(0);
       setIsLoading(true);
+      setError(null);
     }
   }, [isOpen, movie]);
 
@@ -155,6 +157,11 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
 
   const streamUrl = getStreamUrl(movie.trailerUrl);
 
+  const handleVideoError = () => {
+    setIsLoading(false);
+    setError("Unable to play this movie in the current player. Please use the 'Open in External Link' button or download the movie.");
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -210,10 +217,35 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
             onClick={() => setShowControls(true)}
           >
             {/* Loading Spinner Overaly */}
-            {streamUrl && isLoading && (
+            {streamUrl && isLoading && !error && (
               <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm">
                 <div className="w-12 h-12 md:w-16 md:h-16 border-4 border-white/10 border-t-red-600 rounded-full animate-spin shadow-[0_0_20px_rgba(220,38,38,0.3)]"></div>
                 <p className="mt-4 md:mt-6 text-white font-black italic uppercase tracking-[0.3em] text-xs md:text-sm animate-pulse">Loading Movie...</p>
+              </div>
+            )}
+
+            {/* Error Overlay */}
+            {error && (
+              <div className="absolute inset-0 z-[40] flex flex-col items-center justify-center bg-black/95 p-8 text-center backdrop-blur-xl">
+                <div className="w-20 h-20 bg-red-600/20 rounded-full flex items-center justify-center mb-8 border border-red-600/30">
+                  <X className="w-10 h-10 text-red-600" />
+                </div>
+                <h4 className="text-white font-black italic uppercase tracking-tighter text-2xl mb-4">Playback Error</h4>
+                <p className="text-white/60 text-sm max-w-md mb-8 leading-relaxed">{error}</p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <button 
+                    onClick={() => window.open(movie.trailerUrl, '_blank')}
+                    className="px-10 py-5 bg-red-600 text-white rounded-2xl font-black uppercase text-[10px] tracking-[0.3em] hover:bg-red-700 transition-all active:scale-95 shadow-xl shadow-red-600/30"
+                  >
+                    Open External Link
+                  </button>
+                  <button 
+                    onClick={onClose}
+                    className="px-10 py-5 bg-white/5 text-white/60 rounded-2xl font-black uppercase text-[10px] tracking-[0.3em] hover:bg-white/10 transition-all"
+                  >
+                    Close Player
+                  </button>
+                </div>
               </div>
             )}
 
@@ -235,6 +267,7 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
                   onWaiting={() => setIsLoading(true)}
                   onCanPlay={() => setIsLoading(false)}
                   onEnded={() => setIsPlaying(false)}
+                  onError={handleVideoError}
                 />
               ) : (
                 <iframe

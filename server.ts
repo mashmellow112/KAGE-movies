@@ -12,11 +12,12 @@ async function startServer() {
     const origin = req.headers.origin;
     const allowedOrigins = [
       'https://vercel.app',
+      'https://kage-movies.vercel.app',
       'http://localhost:3000',
       process.env.APP_URL // AI Studio dynamic URL
     ].filter(Boolean);
 
-    if (origin && (allowedOrigins.includes(origin) || origin.endsWith('.run.app'))) {
+    if (origin && (allowedOrigins.includes(origin) || origin.endsWith('.run.app') || origin.endsWith('.vercel.app'))) {
         res.setHeader('Access-Control-Allow-Origin', origin);
         res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
         res.setHeader('Access-Control-Allow-Headers', 'Range, Content-Type, x-api-key');
