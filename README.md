@@ -1,6 +1,6 @@
-# Kage Movies 🎬
+# Kage-movies 🎬
 
-Kage Movies is a premium movie discovery and subscription platform built for a high-end cinematic experience. Users can explore the latest blockbusters, watch trailers, and unlock unlimited access through a monthly premium pass.
+Kage-movies is a premium movie discovery and subscription platform built for a high-end cinematic experience. Users can explore the latest blockbusters, watch trailers, and unlock unlimited access through a monthly premium pass.
 
 ## ✨ Features
 
@@ -19,6 +19,9 @@ Kage Movies is a premium movie discovery and subscription platform built for a h
 - **Personalized Library**:
   - **My Library**: Instant access to all movies during an active subscription.
   - **Favorites**: Save movies you want to watch later.
+- **Mega Streaming Support**:
+  - Built-in streaming engine that proxies Mega.nz links for seamless, fast playback.
+  - Supports range requests for seeking and fast-forwarding.
 - **Search & Filter**: Find movies by title, actor, or genre.
 
 ## 🛠️ Tech Stack
@@ -79,4 +82,4 @@ To use a local image, update the `posterUrl` in `src/constants/movies.ts`:
 
 ---
 
-*Built with ❤️ by the Kage Movies Team.*
+*Built with ❤️ by the Kage-movies Team.*

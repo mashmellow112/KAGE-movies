@@ -31,11 +31,11 @@ export default function Auth() {
           <div className="w-20 h-20 bg-red-600 rounded-2xl flex items-center justify-center shadow-[0_0_40px_rgba(220,38,38,0.3)] mb-6">
             <span className="text-5xl font-black text-white italic">K</span>
           </div>
-          <h2 className="text-4xl font-bold tracking-tighter uppercase">Kage Movies</h2>
+          <h2 className="text-4xl font-bold tracking-tighter uppercase">Kage-movies</h2>
         </div>
         
         <h1 className="text-5xl font-black italic tracking-tighter mb-6 uppercase text-stroke">Experience Cinema.</h1>
-        <p className="text-gray-400 mb-10 text-lg leading-relaxed">The ultimate destination for premium storytelling. Sign in to start your journey.</p>
+        <p className="text-gray-400 mb-10 text-lg leading-relaxed">Stream your favorite movies with Kage-movies. High-speed streaming and premium quality, all in one place.</p>
         
         <button
           onClick={handleSignIn}
@@ -51,7 +51,7 @@ export default function Auth() {
         </button>
         
         <p className="mt-8 text-white/40 text-xs text-center px-4 leading-relaxed">
-          Before using this app, you can review Kage Movie’s <span className="text-white/60 hover:underline cursor-pointer">Privacy Policy</span> and <span className="text-white/60 hover:underline cursor-pointer">Terms of Service</span>.
+          Before using this app, you can review Kage-movies’ <span className="text-white/60 hover:underline cursor-pointer">Privacy Policy</span> and <span className="text-white/60 hover:underline cursor-pointer">Terms of Service</span>.
         </p>
       </motion.div>
     </div>
