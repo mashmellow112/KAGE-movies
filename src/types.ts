@@ -4,6 +4,7 @@ export interface Movie {
   description: string;
   posterUrl: string;
   trailerUrl: string;
+  downloadUrl?: string;
   price: number;
   genre: string[];
   rating: number;

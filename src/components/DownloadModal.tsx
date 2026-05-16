@@ -47,8 +47,9 @@ export default function DownloadModal({ isOpen, onClose, movie }: DownloadModalP
               <div className="space-y-3">
                 <button
                   onClick={() => {
-                    if (movie.trailerUrl) {
-                      window.open(movie.trailerUrl, '_blank');
+                    const downloadLink = movie.downloadUrl || movie.trailerUrl;
+                    if (downloadLink) {
+                      window.open(downloadLink, '_blank');
                     } else {
                       alert("Download link not available.");
                     }
