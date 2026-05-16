@@ -269,7 +269,6 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
                   className="w-full h-full max-h-screen object-contain"
                   autoPlay
                   playsInline
-                  webkitPlaysInline={true}
                   preload="auto"
                   crossOrigin="anonymous"
                   onTimeUpdate={handleTimeUpdate}

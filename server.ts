@@ -10,14 +10,10 @@ async function startServer() {
   // Security Middleware
   app.use((req, res, next) => {
     const origin = req.headers.origin;
-    
-    // Explicitly approve requests coming from Vercel, Localhost testing, or headless file containers
-    if (!origin || origin.includes('vercel.app') || origin.includes('localhost') || origin.startsWith('file://') || origin.endsWith('.run.app')) {
-        res.setHeader('Access-Control-Allow-Origin', origin || '*');
-        res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-        res.setHeader('Access-Control-Allow-Headers', 'Range, Content-Type, x-api-key');
-        res.setHeader('Access-Control-Expose-Headers', 'Content-Range, Content-Length, Accept-Ranges');
-    }
+    res.setHeader('Access-Control-Allow-Origin', origin || '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Range, Content-Type, x-api-key');
+    res.setHeader('Access-Control-Expose-Headers', 'Content-Range, Content-Length, Accept-Ranges');
     
     if (req.method === 'OPTIONS') {
         return res.sendStatus(200);
@@ -27,26 +23,27 @@ async function startServer() {
 
   // The streaming engine
   app.get('/api/stream', async (req, res) => {
-    // 1. Read the key from the URL parameters as suggested
     const clientApiKey = req.query.key;
     const systemApiKey = process.env.VITE_STREAM_API_KEY || process.env.STREAM_API_KEY || 'KageSuperSecretToken2026!';
 
-    // 2. Block the request if the keys don't match or aren't set
-    if (!systemApiKey || clientApiKey !== systemApiKey) {
-        return res.status(401).send('Error: Invalid or missing API security token.');
+    // 1. Security Token Check
+    if (clientApiKey !== systemApiKey) {
+        console.error("⛔ Security Block: Invalid API Key provided.");
+        return res.status(401).send('Error: Invalid API token.');
     }
 
     const megaUrl = req.query.url as string;
-
     if (!megaUrl) {
-      return res.status(400).send('Error: Missing "url" parameter.');
+        return res.status(400).send('Error: Missing video URL.');
     }
 
+    console.log(`🎬 Attempting to stream Mega file: ${megaUrl}`);
+
     try {
-      // Connect to Mega anonymously using your public file link
+      // 2. Initialize Mega File Handler
       const file = File.fromURL(megaUrl);
       
-      // Add a timeout to loadAttributes to prevent hanging
+      // Load attributes with a fast timeout safety trigger
       const loadPromise = file.loadAttributes();
       const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Mega link timeout')), 15000));
       
@@ -54,40 +51,50 @@ async function startServer() {
 
       const fileSize = file.size;
       const range = req.headers.range;
-      
-      // Explicitly force modern streaming configurations
-      const contentType = 'video/mp4'; 
+      const contentType = 'video/mp4'; // Standard high-compatibility container
 
+      // 3. Handle Media Range Bytes (For Instant Loading and Seeking)
       if (range) {
           const parts = range.replace(/bytes=/, "").split("-");
           const start = parseInt(parts[0], 10);
           const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
           const chunksize = (end - start) + 1;
 
-          // Desktop players require exact code instructions to handle timeline seeking
+          console.log(`📦 Streaming partial range chunk: ${start}-${end}/${fileSize}`);
+
           res.writeHead(206, {
               'Content-Range': `bytes ${start}-${end}/${fileSize}`,
               'Accept-Ranges': 'bytes',
               'Content-Length': chunksize,
               'Content-Type': contentType,
-              'Connection': 'keep-alive'
+              'Cache-Control': 'no-cache'
           });
 
           const megaStream = file.download({ start, end });
+          megaStream.on('error', (err) => console.error("❌ Mega download stream error:", err));
           megaStream.pipe(res);
       } else {
+          console.log(`🚀 Streaming complete file layout size: ${fileSize}`);
+          
           res.writeHead(200, {
               'Content-Length': fileSize,
               'Content-Type': contentType,
-              'Connection': 'keep-alive'
+              'Accept-Ranges': 'bytes'
           });
+
           const megaStream = file.download({});
+          megaStream.on('error', (err) => console.error("❌ Mega download stream error:", err));
           megaStream.pipe(res);
       }
     } catch (error: any) {
-      console.error('Stream failure:', error.message);
-      res.status(500).send(`Streaming server error: ${error.message}`);
+      console.error('💥 Backend Stream Crash Error:', error);
+      res.status(500).send(`Streaming handshake failed: ${error.message}`);
     }
+  });
+
+  // Ping keep-awake route
+  app.get('/api/ping', (req, res) => {
+    res.status(200).send('Server is active');
   });
 
   // Vite middleware for development
