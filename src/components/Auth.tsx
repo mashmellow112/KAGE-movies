@@ -10,9 +10,15 @@ export default function Auth() {
     try {
       setIsAuthenticating(true);
       await signInWithGoogle();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Sign-in error:", error);
-      alert("Failed to sign in. Please check if popups are enabled for this site.");
+      if (error.code === 'auth/popup-blocked') {
+        alert("The sign-in popup was blocked by your browser. Please allow popups for this site or click the 'Open in new tab' button at the top right of the preview.");
+      } else if (error.code === 'auth/popup-closed-by-user') {
+        // User closed the popup, no need for an alert
+      } else {
+        alert(`Sign-in error: ${error.message || "Unknown error"}. If you're in the AI Studio preview, try opening the app in a new tab.`);
+      }
     } finally {
       setIsAuthenticating(false);
     }
@@ -49,6 +55,10 @@ export default function Auth() {
           )}
           {isAuthenticating ? "Authenticating..." : "Continue with Google"}
         </button>
+
+        <p className="mt-4 text-white/40 text-[10px] uppercase tracking-widest">
+          Trouble signing in? Try opening the app in a new tab.
+        </p>
         
         <p className="mt-8 text-white/40 text-xs text-center px-4 leading-relaxed">
           Before using this app, you can review Kage-movies’ <span className="text-white/60 hover:underline cursor-pointer">Privacy Policy</span> and <span className="text-white/60 hover:underline cursor-pointer">Terms of Service</span>.
