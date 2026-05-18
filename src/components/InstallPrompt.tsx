@@ -77,9 +77,9 @@ export default function InstallPrompt() {
               <Film className="w-6 h-6 text-white" />
             </div>
             <div className="flex-1 space-y-1">
-              <h4 className="text-white font-bold text-sm">Install Kage-Movies</h4>
+              <h4 className="text-white font-bold text-sm">Install Kage Movies</h4>
               <p className="text-white/60 text-xs leading-relaxed">
-                Add Kage-Movies to your home screen for a faster, full-screen streaming experience.
+                Add Kage Movies to your home screen for a faster, full-screen streaming experience.
               </p>
               <div className="flex items-center gap-3 pt-3">
                 <button

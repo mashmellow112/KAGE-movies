@@ -95,12 +95,12 @@ export default function MainPage({ user }: MainPageProps) {
     <div className="flex min-h-screen bg-[#050507]">
       {/* Sidebar Navigation - Hidden on Mobile */}
       <aside className="hidden md:flex w-20 bg-[#0a0a0e] border-r border-white/5 flex-col items-center py-8 space-y-10 fixed h-full z-[55]">
-          <div 
-            className="w-10 h-10 bg-white rounded-lg flex items-center justify-center cursor-pointer overflow-hidden p-2"
-            onClick={() => setActiveTab('home')}
-          >
-            <img src="/favicon.png" alt="Kage-Movies" className="w-full h-full object-contain" />
-          </div>
+        <div 
+          className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center font-black italic text-xl cursor-pointer"
+          onClick={() => setActiveTab('home')}
+        >
+          K
+        </div>
         <div className="space-y-8 flex flex-col items-center opacity-40">
           <Film 
             className={`w-6 h-6 cursor-pointer transition-colors ${activeTab === 'home' ? 'text-red-600' : 'text-white hover:text-red-500'}`} 
@@ -136,12 +136,12 @@ export default function MainPage({ user }: MainPageProps) {
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="bg-white/5 p-8 md:p-12 rounded-[3rem] border border-white/10 mb-12">
                 <div className="flex flex-col md:flex-row items-center gap-8">
-                  <div className="w-32 h-32 rounded-3xl bg-white flex items-center justify-center text-4xl font-black text-white italic shadow-2xl overflow-hidden p-6">
-                    <img src="/favicon.png" alt="Kage-Movies" className="w-full h-full object-contain" />
+                  <div className="w-32 h-32 rounded-3xl bg-gradient-to-tr from-orange-400 to-red-600 flex items-center justify-center text-4xl font-black text-white italic shadow-2xl">
+                    {user?.displayName?.[0] || 'K'}
                   </div>
                   <div className="text-center md:text-left">
                     <h2 className="text-4xl font-black italic uppercase tracking-tighter mb-2 text-stroke">
-                      {user?.displayName || 'Kage-Movies User'}
+                      {user?.displayName || 'Kage-movies User'}
                     </h2>
                     <p className="text-gray-500 font-mono text-sm tracking-widest uppercase">
                       {user?.email}
@@ -241,7 +241,7 @@ export default function MainPage({ user }: MainPageProps) {
                   <div className="flex items-center gap-2 md:gap-3">
                     <div className="w-1 h-5 md:h-6 bg-red-600 rounded-full" />
                     <h2 className="text-lg md:text-2xl font-bold tracking-tight">
-                      {activeTab === 'home' ? 'Kage-Movies Recommendations' : activeTab === 'hot' ? 'Trending Now' : 'My Favorites'}
+                      {activeTab === 'home' ? 'Kage Recommendations' : activeTab === 'hot' ? 'Trending Now' : 'My Favorites'}
                     </h2>
                   </div>
                   {activeTab !== 'home' && (

@@ -166,7 +166,7 @@ export default function PaymentModal({ movie, isOpen, onClose }: PaymentModalPro
                   </button>
                   
                   <p className="text-[10px] text-center text-gray-600 uppercase font-bold tracking-widest">
-                    Secure transaction via Kage-Movies Payments
+                    Secure transaction via Kage Payments
                   </p>
                 </div>
               )}

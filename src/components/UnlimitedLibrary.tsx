@@ -74,7 +74,7 @@ export default function UnlimitedLibrary({ user }: UnlimitedLibraryProps) {
           
           <div className="flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-2 rounded-2xl">
             <Sparkles className="w-4 h-4 text-red-500" />
-            <span className="text-xs font-black uppercase tracking-widest">Kage-Movies Gold Member</span>
+            <span className="text-xs font-black uppercase tracking-widest">Kage-movies Gold Member</span>
           </div>
         </div>
 

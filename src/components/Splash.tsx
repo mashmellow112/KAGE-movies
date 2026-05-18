@@ -28,8 +28,8 @@ export default function Splash({ onComplete }: SplashProps) {
         className="flex flex-col items-center"
       >
         <div className="relative mb-6">
-          <div className="w-24 h-24 bg-white rounded-2xl flex items-center justify-center shadow-[0_0_50px_rgba(255,255,255,0.1)] mb-6 overflow-hidden p-4">
-            <img src="/favicon.png" alt="Kage-Movies" className="w-full h-full object-contain" />
+          <div className="w-24 h-24 bg-red-600 rounded-2xl flex items-center justify-center shadow-[0_0_50px_rgba(220,38,38,0.3)] mb-6">
+            <span className="text-6xl font-black text-white italic">K</span>
           </div>
           <motion.div
              className="absolute inset-0 bg-red-600 blur-3xl opacity-20"
@@ -38,7 +38,7 @@ export default function Splash({ onComplete }: SplashProps) {
           />
         </div>
         <h1 className="text-4xl font-bold tracking-tighter uppercase text-white mb-2">
-          Kage-Movies
+          Kage-movies
         </h1>
         <p className="text-white/50 font-mono text-xs tracking-widest uppercase">
           Cinema evolved
