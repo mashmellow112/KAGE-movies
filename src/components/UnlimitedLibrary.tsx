@@ -6,7 +6,7 @@ import MovieCard from './MovieCard';
 import Navbar from './Navbar';
 import SubscriptionModal from './SubscriptionModal';
 import DownloadModal from './DownloadModal';
-import MoviePlayer from './MoviePlayer';
+import MoviePremiumPlayer from './MoviePremiumPlayer';
 import WhatsAppBubble from './WhatsAppBubble';
 import { auth } from '../lib/firebase';
 import { User } from 'firebase/auth';
@@ -119,7 +119,7 @@ export default function UnlimitedLibrary({ user }: UnlimitedLibraryProps) {
         movie={downloadMovie}
       />
 
-      <MoviePlayer
+      <MoviePremiumPlayer
         isOpen={showPlayer}
         onClose={() => setShowPlayer(false)}
         movie={watchingMovie}

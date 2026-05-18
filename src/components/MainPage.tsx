@@ -4,7 +4,7 @@ import Navbar from './Navbar';
 import MovieCard from './MovieCard';
 import MovieDetailModal from './MovieDetailModal';
 import DownloadModal from './DownloadModal';
-import MoviePlayer from './MoviePlayer';
+import TrailerPlayer from './TrailerPlayer';
 import SubscriptionModal from './SubscriptionModal';
 import { MOVIES } from '../constants/movies';
 import { Movie } from '../types';
@@ -26,7 +26,6 @@ export default function MainPage({ user }: MainPageProps) {
   const [showSubscription, setShowSubscription] = useState(false);
   const [downloadMovie, setDownloadMovie] = useState<Movie | null>(null);
   const [watchingMovie, setWatchingMovie] = useState<Movie | null>(null);
-  const [playTrailerOnly, setPlayTrailerOnly] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [activeTab, setActiveTab] = useState<'home' | 'hot' | 'favs' | 'me'>('home');
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -68,7 +67,6 @@ export default function MainPage({ user }: MainPageProps) {
 
   const handlePlayTrailer = (movie: Movie) => {
     setWatchingMovie(movie);
-    setPlayTrailerOnly(true);
     setShowPlayer(true);
   };
 
@@ -79,7 +77,6 @@ export default function MainPage({ user }: MainPageProps) {
 
   const handleWatchMovie = (movie: Movie) => {
     setWatchingMovie(movie);
-    setPlayTrailerOnly(false);
     setShowPlayer(true);
     setShowDetails(false);
   };
@@ -355,11 +352,10 @@ export default function MainPage({ user }: MainPageProps) {
         onWatch={handleWatchMovie}
       />
 
-      <MoviePlayer
+      <TrailerPlayer
         isOpen={showPlayer}
         onClose={() => setShowPlayer(false)}
         movie={watchingMovie}
-        playTrailerOnly={playTrailerOnly}
       />
 
       <SubscriptionModal
