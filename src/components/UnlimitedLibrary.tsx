@@ -7,6 +7,7 @@ import Navbar from './Navbar';
 import SubscriptionModal from './SubscriptionModal';
 import DownloadModal from './DownloadModal';
 import MoviePlayer from './MoviePlayer';
+import WhatsAppBubble from './WhatsAppBubble';
 import { auth } from '../lib/firebase';
 import { User } from 'firebase/auth';
 import { Crown, Sparkles, Filter, ChevronLeft, Download } from 'lucide-react';
@@ -46,6 +47,7 @@ export default function UnlimitedLibrary({ user }: UnlimitedLibraryProps) {
         onSearch={setSearchQuery} 
         onUpgrade={() => setShowSubscription(true)}
         user={user} 
+        isSubscribed={true}
       />
       
       <main className="pt-28 px-4 md:px-8 pb-20 max-w-7xl mx-auto w-full">
@@ -88,12 +90,11 @@ export default function UnlimitedLibrary({ user }: UnlimitedLibraryProps) {
                <MovieCard 
                  movie={movie}
                  onDownload={(m) => handleDownload(m)}
-                 onBuy={() => {}}
                  onWatch={(m) => handleWatchMovie(m)}
                  onClick={() => {}}
                  onFavorite={() => {}}
                  isFavorite={false}
-                 isSubscribed={true}
+                 isPremium={true}
                />
              </motion.div>
            ))}
@@ -123,6 +124,8 @@ export default function UnlimitedLibrary({ user }: UnlimitedLibraryProps) {
         onClose={() => setShowPlayer(false)}
         movie={watchingMovie}
       />
+
+      <WhatsAppBubble />
     </div>
   );
 }

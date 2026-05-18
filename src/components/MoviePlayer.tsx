@@ -71,6 +71,12 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
       setCurrentTime(0);
       setIsLoading(true);
       setError(null);
+
+      // Safety timeout for loader
+      const loaderTimeout = setTimeout(() => {
+        setIsLoading(false);
+      }, 12000);
+      return () => clearTimeout(loaderTimeout);
     }
   }, [isOpen, movie]);
 
@@ -222,7 +228,7 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
     }
   };
 
-  const streamUrl = getStreamUrl(movie.trailerUrl);
+  const streamUrl = getStreamUrl(movie.downloadUrl) || getStreamUrl(movie.trailerUrl);
 
   const handleVideoError = (e: any) => {
     const videoError = videoRef.current?.error;
@@ -343,6 +349,7 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
                 <video
                   ref={videoRef}
                   id="movie-player"
+                  src={streamUrl}
                   className="w-full h-full max-h-screen object-contain"
                   autoPlay
                   playsInline
@@ -369,8 +376,8 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
                   onCanPlay={() => setIsLoading(false)}
                   onLoadedData={() => setIsLoading(false)}
                   onEnded={() => setIsPlaying(false)}
+                  onError={handleVideoError}
                 >
-                  <source src={streamUrl} type="video/mp4" />
                   Your desktop installation container framework does not support direct hardware decoding.
                 </video>
               ) : (

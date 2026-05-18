@@ -54,6 +54,11 @@ async function startServer() {
       const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Mega link handshake timed out')), 45000));
       
       await Promise.race([loadPromise, timeoutPromise]);
+      
+      if (!file.size) {
+        console.error('❌ Mega Link Error: File size is 0 or undefined. Link might be broken.');
+        return res.status(404).send('Error: Could not retrieve movie data from Mega.');
+      }
 
       const fileSize = file.size;
       const fileName = file.name || 'video.mp4';
@@ -112,7 +117,7 @@ async function startServer() {
               'Cache-Control': 'public, max-age=3600'
           });
 
-          megaStream = file.download();
+          megaStream = file.download({});
           megaStream.on('error', (err: any) => {
             console.error("❌ Mega full stream error:", err);
             if (!res.headersSent) res.status(500).end();

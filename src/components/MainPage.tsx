@@ -2,14 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Navbar from './Navbar';
 import MovieCard from './MovieCard';
-import PaymentModal from './PaymentModal';
-import SubscriptionModal from './SubscriptionModal';
 import MovieDetailModal from './MovieDetailModal';
 import DownloadModal from './DownloadModal';
 import MoviePlayer from './MoviePlayer';
+import SubscriptionModal from './SubscriptionModal';
 import { MOVIES } from '../constants/movies';
 import { Movie } from '../types';
-import { TrendingUp, Clock, Star, Film, Play, User as UserIcon, Lock, ChevronRight, Crown, Download } from 'lucide-react';
+import { TrendingUp, Clock, Star, Film, Play, User as UserIcon, Download, Crown, ChevronRight } from 'lucide-react';
 import { auth, db, OperationType, handleFirestoreError } from '../lib/firebase';
 import { User } from 'firebase/auth';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
@@ -21,18 +20,17 @@ interface MainPageProps {
 
 export default function MainPage({ user }: MainPageProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const navigate = useNavigate();
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
-  const [showPayment, setShowPayment] = useState(false);
-  const [showSubscription, setShowSubscription] = useState(false);
   const [showDownload, setShowDownload] = useState(false);
   const [showPlayer, setShowPlayer] = useState(false);
+  const [showSubscription, setShowSubscription] = useState(false);
   const [downloadMovie, setDownloadMovie] = useState<Movie | null>(null);
   const [watchingMovie, setWatchingMovie] = useState<Movie | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [activeTab, setActiveTab] = useState<'home' | 'hot' | 'favs' | 'me'>('home');
   const [favorites, setFavorites] = useState<string[]>([]);
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!user) return;
@@ -58,8 +56,6 @@ export default function MainPage({ user }: MainPageProps) {
     return () => unsubscribe();
   }, [user]);
 
-  const purchasedMovies = isSubscribed ? MOVIES : [];
-
   const filteredMovies = MOVIES.filter(movie => {
     const matchesSearch = movie.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       movie.genre.some(g => g.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -76,12 +72,6 @@ export default function MainPage({ user }: MainPageProps) {
   const handleDownload = (movie: Movie) => {
     setDownloadMovie(movie);
     setShowDownload(true);
-  };
-
-  const handleBuyMovie = (movie: Movie) => {
-    setSelectedMovie(movie);
-    setShowPayment(true);
-    setShowDetails(false);
   };
 
   const handleWatchMovie = (movie: Movie) => {
@@ -139,7 +129,8 @@ export default function MainPage({ user }: MainPageProps) {
         <Navbar 
           onSearch={setSearchQuery} 
           onUpgrade={() => setShowSubscription(true)}
-          user={user} 
+          user={user}
+          isSubscribed={isSubscribed}
         />
         
         <main className="pt-24 md:pt-28 px-4 md:px-8 pb-32 md:pb-20 max-w-7xl mx-auto w-full">
@@ -163,32 +154,18 @@ export default function MainPage({ user }: MainPageProps) {
 
               <h3 className="text-2xl font-bold tracking-tight mb-8">My Library</h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
-                {purchasedMovies.length > 0 ? (
-                  purchasedMovies.map(movie => (
-                    <MovieCard 
-                      key={movie.id} 
-                      movie={movie} 
-                      onDownload={(m) => handleDownload(m)}
-                      onBuy={() => {}}
-                      onWatch={(m) => handleWatchMovie(m)}
-                      onClick={(m) => handleShowDetails(m)}
-                      onFavorite={(m) => toggleFavorite(m.id)}
-                      isFavorite={favorites.includes(movie.id)}
-                    />
-                  ))
-                ) : (
-                  <div className="col-span-full aspect-video bg-white/5 rounded-[3rem] border border-dashed border-white/10 flex flex-col items-center justify-center text-white/20 p-12">
-                    <Lock className="w-12 h-12 mb-4 opacity-20" />
-                    <h4 className="text-xl font-bold text-white mb-2">Unlock Unlimited Potential</h4>
-                    <p className="font-bold italic text-sm text-center">Watching is free for everyone. Upgrade to Gold for offline downloads.</p>
-                    <button 
-                      onClick={() => setShowSubscription(true)}
-                      className="mt-6 px-10 py-4 bg-red-600 hover:bg-red-700 text-white border border-white/10 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all shadow-xl shadow-red-600/20"
-                    >
-                      Get Gold Access
-                    </button>
-                  </div>
-                )}
+                {MOVIES.map(movie => (
+                  <MovieCard 
+                    key={movie.id} 
+                    movie={movie} 
+                    onDownload={(m) => handleDownload(m)}
+                    onWatch={(m) => handleWatchMovie(m)}
+                    onClick={(m) => handleShowDetails(m)}
+                    onFavorite={(m) => toggleFavorite(m.id)}
+                    isFavorite={favorites.includes(movie.id)}
+                    isPremium={isSubscribed}
+                  />
+                ))}
               </div>
             </div>
           ) : (
@@ -210,12 +187,11 @@ export default function MainPage({ user }: MainPageProps) {
                         </div>
                      </div>
                      <div className="w-full md:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-black/20 rounded-2xl font-black uppercase text-[11px] tracking-[0.2em] group-hover:bg-black/40 transition-colors border border-white/10">
-                        Enter Library <ChevronRight className="w-4 h-4" />
+                        Enter Premium Library <ChevronRight className="w-4 h-4" />
                      </div>
                    </div>
                 </section>
               )}
-
               {/* Hero Section - Only show on home tab */}
               {activeTab === 'home' && searchQuery === '' && (
                 <section className="relative h-[300px] md:h-[450px] rounded-3xl md:rounded-[2.5rem] overflow-hidden mb-8 md:mb-12 group shadow-2xl">
@@ -249,7 +225,7 @@ export default function MainPage({ user }: MainPageProps) {
                         className="px-6 md:px-8 py-3 md:py-4 bg-white text-black rounded-xl md:rounded-2xl font-bold flex items-center space-x-2 transition-all active:scale-95 text-sm"
                       >
                         <Play className="w-4 h-4 fill-current" />
-                        <span>Watch Now</span>
+                        <span>Watch {isSubscribed ? 'Now' : 'Trailer'}</span>
                       </button>
                       <button 
                         onClick={() => handleShowDetails(MOVIES[0])}
@@ -267,7 +243,7 @@ export default function MainPage({ user }: MainPageProps) {
                   <div className="flex items-center gap-2 md:gap-3">
                     <div className="w-1 h-5 md:h-6 bg-red-600 rounded-full" />
                     <h2 className="text-lg md:text-2xl font-bold tracking-tight">
-                      {activeTab === 'home' ? 'Kage-movies Recommendations' : activeTab === 'hot' ? 'Trending Now' : 'My Favorites'}
+                      {activeTab === 'home' ? 'Kage Recommendations' : activeTab === 'hot' ? 'Trending Now' : 'My Favorites'}
                     </h2>
                   </div>
                   {activeTab !== 'home' && (
@@ -286,12 +262,10 @@ export default function MainPage({ user }: MainPageProps) {
                           key={movie.id} 
                           movie={movie} 
                           onDownload={(m) => { handleDownload(m); }}
-                          onBuy={(m) => { handleBuyMovie(m); }}
                           onWatch={(m) => handleWatchMovie(m)}
                           onClick={(m) => handleShowDetails(m)}
                           onFavorite={(m) => toggleFavorite(m.id)}
                           isFavorite={favorites.includes(movie.id)}
-                          isSubscribed={isSubscribed}
                         />
                       ))}
                     </div>
@@ -319,9 +293,6 @@ export default function MainPage({ user }: MainPageProps) {
                       <h3 className="text-2xl md:text-3xl font-bold italic uppercase tracking-tighter mb-4 text-stroke">Premium Quality</h3>
                       <p className="text-gray-400 text-sm md:text-lg leading-relaxed mb-6">Stream in stunning 4K Ultra HD with cinematic surround sound.</p>
                     </div>
-                    <button className="text-red-500 font-bold flex items-center gap-2 group text-sm">
-                      Explore Premium <Clock className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </button>
                   </div>
 
                   <div className="bg-white/5 p-6 md:p-8 rounded-[2rem] border border-white/10 flex flex-col justify-between">
@@ -330,9 +301,8 @@ export default function MainPage({ user }: MainPageProps) {
                         <Film className="text-white w-6 h-6" />
                       </div>
                       <h3 className="text-2xl md:text-3xl font-bold italic uppercase tracking-tighter mb-4 text-stroke">Offline Mode</h3>
-                      <p className="text-gray-400 text-sm md:text-lg leading-relaxed mb-6">Download movies to your device and watch anytime, anywhere.</p>
+                      <p className="text-gray-400 text-sm md:text-lg leading-relaxed mb-6">Download movies to your device and watch anytime, anywhere. Free for all.</p>
                     </div>
-                    <p className="text-white/30 text-xs italic">Kage-movies Pro Exclusive</p>
                   </div>
                 </section>
               )}
@@ -365,15 +335,6 @@ export default function MainPage({ user }: MainPageProps) {
           <span className={`text-[8px] font-bold uppercase ${activeTab === 'favs' ? 'text-white' : 'text-white/20'}`}>Favs</span>
         </button>
         <button 
-          onClick={() => setShowSubscription(true)}
-          className="flex flex-col items-center gap-1 active:scale-95 transition-transform -mt-8"
-        >
-          <div className="w-12 h-12 bg-red-600 rounded-2xl flex items-center justify-center shadow-lg shadow-red-600/40 border-2 border-white/20">
-            <Crown className="w-6 h-6 text-white" />
-          </div>
-          <span className="text-[8px] font-black uppercase text-red-500 mt-1">Gold</span>
-        </button>
-        <button 
           onClick={() => setActiveTab('me')}
           className="flex flex-col items-center gap-1 active:scale-95 transition-transform"
         >
@@ -387,21 +348,13 @@ export default function MainPage({ user }: MainPageProps) {
         onClose={() => setShowDetails(false)}
         movie={selectedMovie}
         onDownload={handleDownload}
-        onBuy={handleBuyMovie}
         onWatch={handleWatchMovie}
-        isSubscribed={isSubscribed}
       />
 
       <MoviePlayer
         isOpen={showPlayer}
         onClose={() => setShowPlayer(false)}
         movie={watchingMovie}
-      />
-
-      <PaymentModal 
-        isOpen={showPayment} 
-        onClose={() => setShowPayment(false)} 
-        movie={selectedMovie} 
       />
 
       <SubscriptionModal

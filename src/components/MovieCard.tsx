@@ -6,15 +6,14 @@ import { Movie } from '../types';
 interface MovieCardProps {
   movie: Movie;
   onDownload: (movie: Movie) => void;
-  onBuy: (movie: Movie) => void;
   onWatch: (movie: Movie) => void;
   onClick: (movie: Movie) => void;
   onFavorite: (movie: Movie) => void;
   isFavorite: boolean;
-  isSubscribed?: boolean;
+  isPremium?: boolean;
 }
 
-export default function MovieCard({ movie, onDownload, onBuy, onWatch, onClick, onFavorite, isFavorite, isSubscribed }: MovieCardProps) {
+export default function MovieCard({ movie, onDownload, onWatch, onClick, onFavorite, isFavorite, isPremium }: MovieCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
@@ -33,13 +32,7 @@ export default function MovieCard({ movie, onDownload, onBuy, onWatch, onClick, 
       />
       
       {/* Top Badges */}
-      <div className="absolute top-3 left-3 right-3 z-20 flex justify-between items-start md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-        <button 
-          onClick={(e) => { e.stopPropagation(); onFavorite(movie); }}
-          className={`p-2 rounded-lg backdrop-blur-md border border-white/10 transition-all active:scale-95 ${isFavorite ? 'bg-red-600 text-white border-red-500' : 'bg-black/60 text-white hover:bg-red-600'}`}
-        >
-          <Heart className={`w-4 h-4 ${isFavorite ? 'fill-white' : ''}`} />
-        </button>
+      <div className="absolute top-3 left-3 right-3 z-20 flex justify-end items-start md:opacity-0 md:group-hover:opacity-100 transition-opacity">
         <div className="bg-black/60 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1 border border-white/10 md:group-hover:bg-red-600 transition-colors duration-500">
           <Star className="w-3 h-3 text-yellow-400 fill-yellow-400 md:group-hover:text-white md:group-hover:fill-white font-bold" />
           <span className="text-[10px] font-black text-white">{movie.rating}</span>
@@ -74,7 +67,7 @@ export default function MovieCard({ movie, onDownload, onBuy, onWatch, onClick, 
             onClick={(e) => { e.stopPropagation(); onWatch(movie); }}
             className="flex-1 py-1.5 md:py-2 bg-white text-black rounded-lg md:rounded-xl font-bold text-[8px] md:text-[10px] uppercase tracking-wider hover:bg-gray-200 transition-all active:scale-95 shadow-xl"
           >
-            Watch
+            {isPremium ? 'Watch Now' : 'Trailer'}
           </button>
         </div>
       </div>
