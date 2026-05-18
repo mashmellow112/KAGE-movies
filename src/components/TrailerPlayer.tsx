@@ -15,7 +15,7 @@ export default function TrailerPlayer({ movie, isOpen, onClose }: TrailerPlayerP
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true); // Default to muted for autoplay reliability
   const [showControls, setShowControls] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [isReady, setIsReady] = useState(false);
@@ -64,11 +64,11 @@ export default function TrailerPlayer({ movie, isOpen, onClose }: TrailerPlayerP
       setIsLoading(true);
       setIsReady(false);
       setError(null);
+      setIsMuted(true); // Always start muted to guarantee autoplay
 
-      // Safety timeout for loader
       const loaderTimeout = setTimeout(() => {
         setIsLoading(false);
-      }, 12000);
+      }, 10000);
       return () => clearTimeout(loaderTimeout);
     }
   }, [isOpen, movie]);
@@ -234,14 +234,14 @@ export default function TrailerPlayer({ movie, isOpen, onClose }: TrailerPlayerP
               </div>
             )}
 
-            <div className="w-full h-full flex items-center justify-center">
+            <div className="w-full h-full flex items-center justify-center pointer-events-none">
               <Player
-                key={movie.trailerUrl}
+                key={`${movie.id}-${isOpen}`}
                 ref={playerRef}
                 url={movie.trailerUrl}
                 width="100%"
                 height="100%"
-                playing={isOpen && isPlaying && isReady}
+                playing={isOpen && isPlaying}
                 volume={volume}
                 muted={isMuted}
                 onProgress={(state: any) => handleProgress(state)}
@@ -251,7 +251,7 @@ export default function TrailerPlayer({ movie, isOpen, onClose }: TrailerPlayerP
                   if (playerRef.current) {
                     try {
                       const d = playerRef.current.getDuration();
-                      if (d > 0) handleDuration(d);
+                      if (d > 0) setDuration(d);
                     } catch (err) {}
                   }
                 }}
@@ -267,7 +267,9 @@ export default function TrailerPlayer({ movie, isOpen, onClose }: TrailerPlayerP
                       controls: 0,
                       disablekb: 1,
                       enablejsapi: 1,
-                      origin: window.location.origin
+                      playsinline: 1,
+                      origin: window.location.origin,
+                      fs: 0
                     }
                   }
                 }}

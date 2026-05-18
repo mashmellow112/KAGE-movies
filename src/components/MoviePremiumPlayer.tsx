@@ -315,7 +315,7 @@ export default function MoviePremiumPlayer({ movie, isOpen, onClose }: MoviePrem
                 url={activeUrl}
                 width="100%"
                 height="100%"
-                playing={isOpen && isPlaying && isReady}
+                playing={isOpen && isPlaying}
                 volume={volume}
                 muted={isMuted}
                 playbackRate={playbackSpeed}
@@ -326,7 +326,7 @@ export default function MoviePremiumPlayer({ movie, isOpen, onClose }: MoviePrem
                   if (playerRef.current) {
                     try {
                       const d = playerRef.current.getDuration();
-                      if (d > 0) handleDuration(d);
+                      if (d > 0) setDuration(d);
                     } catch (err) {
                       console.warn("Could not get duration on premium ready", err);
                     }
