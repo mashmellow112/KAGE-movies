@@ -16,6 +16,7 @@ import Splash from './components/Splash';
 import Auth from './components/Auth';
 import MainPage from './components/MainPage';
 import UnlimitedLibrary from './components/UnlimitedLibrary';
+import Trailer from './components/Trailer';
 import InstallPrompt from './components/InstallPrompt';
 import { AnimatePresence } from 'motion/react';
 
@@ -54,6 +55,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<MainPage user={user} />} />
               <Route path="/unlimited" element={<UnlimitedLibrary user={user} />} />
+              <Route path="/trailer" element={<Trailer />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           )}

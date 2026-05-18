@@ -4,7 +4,6 @@ import Navbar from './Navbar';
 import MovieCard from './MovieCard';
 import MovieDetailModal from './MovieDetailModal';
 import DownloadModal from './DownloadModal';
-import TrailerPlayer from './TrailerPlayer';
 import SubscriptionModal from './SubscriptionModal';
 import { MOVIES } from '../constants/movies';
 import { Movie } from '../types';
@@ -22,10 +21,8 @@ export default function MainPage({ user }: MainPageProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [showDownload, setShowDownload] = useState(false);
-  const [showPlayer, setShowPlayer] = useState(false);
   const [showSubscription, setShowSubscription] = useState(false);
   const [downloadMovie, setDownloadMovie] = useState<Movie | null>(null);
-  const [watchingMovie, setWatchingMovie] = useState<Movie | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [activeTab, setActiveTab] = useState<'home' | 'hot' | 'favs' | 'me'>('home');
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -66,8 +63,7 @@ export default function MainPage({ user }: MainPageProps) {
   });
 
   const handlePlayTrailer = (movie: Movie) => {
-    setWatchingMovie(movie);
-    setShowPlayer(true);
+    navigate('/trailer', { state: { url: movie.trailerUrl, title: movie.title } });
   };
 
   const handleDownload = (movie: Movie) => {
@@ -76,9 +72,10 @@ export default function MainPage({ user }: MainPageProps) {
   };
 
   const handleWatchMovie = (movie: Movie) => {
-    setWatchingMovie(movie);
-    setShowPlayer(true);
-    setShowDetails(false);
+    // If user is subscribed, maybe they want to watch the actual movie?
+    // But user's request is specific about trailer playing.
+    // Let's stick to their provided Trailer page for now.
+    navigate('/trailer', { state: { url: movie.trailerUrl, title: movie.title } });
   };
 
   const handleShowDetails = (movie: Movie) => {
@@ -350,12 +347,6 @@ export default function MainPage({ user }: MainPageProps) {
         movie={selectedMovie}
         onDownload={handleDownload}
         onWatch={handleWatchMovie}
-      />
-
-      <TrailerPlayer
-        isOpen={showPlayer}
-        onClose={() => setShowPlayer(false)}
-        movie={watchingMovie}
       />
 
       <SubscriptionModal

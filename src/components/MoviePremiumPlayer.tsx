@@ -129,8 +129,6 @@ export default function MoviePremiumPlayer({ movie, isOpen, onClose }: MoviePrem
     }
   };
 
-  const Player = (ReactPlayer as any).default || ReactPlayer;
-
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
     if (playerRef.current && duration > 0) {
       const rect = e.currentTarget.getBoundingClientRect();
@@ -209,6 +207,18 @@ export default function MoviePremiumPlayer({ movie, isOpen, onClose }: MoviePrem
   const handleDownload = () => {
     window.open(movie.downloadUrl, '_blank');
   };
+
+  const PlayerWrapper = React.forwardRef<HTMLDivElement, any>((props, ref) => {
+    const { 
+      onDuration, onBuffer, onBufferEnd, onProgress, onReady, onEnded, onError, onStart, onPause, onPlay, onSeek,
+      url, playing, loop, controls, volume, muted, playbackRate, width, height, style, progressInterval, playsinline, pip, stopOnUnmount, light, playIcon, previewTabIndex, fallback,
+      wrapper, config,
+      ...rest 
+    } = props;
+    return <div {...rest} ref={ref} />;
+  });
+
+  const Player = ReactPlayer as any;
 
   return (
     <AnimatePresence>
@@ -296,7 +306,7 @@ export default function MoviePremiumPlayer({ movie, isOpen, onClose }: MoviePrem
                     onClick={handleDownload}
                     className="px-12 py-5 bg-red-600 text-white rounded-2xl font-black uppercase text-xs tracking-[0.3em] hover:bg-red-700 transition-all active:scale-95 shadow-2xl shadow-red-600/40"
                   >
-                    Open in Google Drive
+                    Open Download Link
                   </button>
                   <button 
                     onClick={onClose}
@@ -308,7 +318,7 @@ export default function MoviePremiumPlayer({ movie, isOpen, onClose }: MoviePrem
               </div>
             )}
 
-            <div className="w-full h-full flex items-center justify-center">
+            <div className="w-full h-full flex items-center justify-center text-white">
               <Player
                 key={activeUrl}
                 ref={playerRef}
@@ -319,7 +329,9 @@ export default function MoviePremiumPlayer({ movie, isOpen, onClose }: MoviePrem
                 volume={volume}
                 muted={isMuted}
                 playbackRate={playbackSpeed}
-                onProgress={(state: any) => handleProgress(state)}
+                onProgress={handleProgress}
+                onDuration={handleDuration}
+                wrapper={PlayerWrapper}
                 onReady={() => {
                   setIsLoading(false);
                   setIsReady(true);
@@ -332,6 +344,8 @@ export default function MoviePremiumPlayer({ movie, isOpen, onClose }: MoviePrem
                     }
                   }
                 }}
+                onBuffer={() => setIsLoading(true)}
+                onBufferEnd={() => setIsLoading(false)}
                 onEnded={() => setIsPlaying(false)}
                 onError={handleVideoError}
                 config={{
