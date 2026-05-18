@@ -7,9 +7,10 @@ interface MoviePlayerProps {
   movie: Movie | null;
   isOpen: boolean;
   onClose: () => void;
+  playTrailerOnly?: boolean;
 }
 
-export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps) {
+export default function MoviePlayer({ movie, isOpen, onClose, playTrailerOnly = false }: MoviePlayerProps) {
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -228,7 +229,7 @@ export default function MoviePlayer({ movie, isOpen, onClose }: MoviePlayerProps
     }
   };
 
-  const streamUrl = getStreamUrl(movie.downloadUrl) || getStreamUrl(movie.trailerUrl);
+  const streamUrl = playTrailerOnly ? null : (getStreamUrl(movie.downloadUrl) || getStreamUrl(movie.trailerUrl));
 
   const handleVideoError = (e: any) => {
     const videoError = videoRef.current?.error;

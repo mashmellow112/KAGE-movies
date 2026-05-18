@@ -6,7 +6,7 @@ export const MOVIES: Movie[] = [
     title: 'Last Bullet',
     description: "A retired elite assassin is forced back into action when his past comes calling, leading to a high-stakes game of survival where every bullet counts.",
     posterUrl: 'https://image.tmdb.org/t/p/original/qycPITRqXgPai7zj1gKffjCdSB5.jpg',
-    trailerUrl: 'https://drive.google.com/file/d/1xas5WkSTD10hbNM87rKlM0qfcAiPv1EM/view',
+    trailerUrl: 'https://www.youtube.com/watch?v=r2u9GifyDg0',
     downloadUrl: 'https://mega.nz/file/d7JHWY7T#i_Hfh5og3l4QcAy9LKAs95WQKCyPTD7bLEMdwEfIo4I',
     price: 4000,
     genre: ['Action', 'Thriller'],

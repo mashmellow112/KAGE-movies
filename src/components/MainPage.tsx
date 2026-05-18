@@ -26,6 +26,7 @@ export default function MainPage({ user }: MainPageProps) {
   const [showSubscription, setShowSubscription] = useState(false);
   const [downloadMovie, setDownloadMovie] = useState<Movie | null>(null);
   const [watchingMovie, setWatchingMovie] = useState<Movie | null>(null);
+  const [playTrailerOnly, setPlayTrailerOnly] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [activeTab, setActiveTab] = useState<'home' | 'hot' | 'favs' | 'me'>('home');
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -66,7 +67,9 @@ export default function MainPage({ user }: MainPageProps) {
   });
 
   const handlePlayTrailer = (movie: Movie) => {
-    window.open(movie.trailerUrl, '_blank');
+    setWatchingMovie(movie);
+    setPlayTrailerOnly(true);
+    setShowPlayer(true);
   };
 
   const handleDownload = (movie: Movie) => {
@@ -76,6 +79,7 @@ export default function MainPage({ user }: MainPageProps) {
 
   const handleWatchMovie = (movie: Movie) => {
     setWatchingMovie(movie);
+    setPlayTrailerOnly(false);
     setShowPlayer(true);
     setShowDetails(false);
   };
@@ -221,11 +225,11 @@ export default function MainPage({ user }: MainPageProps) {
                         <span>Download</span>
                       </button>
                       <button 
-                        onClick={() => handleWatchMovie(MOVIES[0])}
+                        onClick={() => handlePlayTrailer(MOVIES[0])}
                         className="px-6 md:px-8 py-3 md:py-4 bg-white text-black rounded-xl md:rounded-2xl font-bold flex items-center space-x-2 transition-all active:scale-95 text-sm"
                       >
                         <Play className="w-4 h-4 fill-current" />
-                        <span>Watch {isSubscribed ? 'Now' : 'Trailer'}</span>
+                        <span>Trailer</span>
                       </button>
                       <button 
                         onClick={() => handleShowDetails(MOVIES[0])}
@@ -355,6 +359,7 @@ export default function MainPage({ user }: MainPageProps) {
         isOpen={showPlayer}
         onClose={() => setShowPlayer(false)}
         movie={watchingMovie}
+        playTrailerOnly={playTrailerOnly}
       />
 
       <SubscriptionModal
