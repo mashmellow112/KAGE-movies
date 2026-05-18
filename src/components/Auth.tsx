@@ -39,14 +39,14 @@ export default function Auth() {
         className="z-10 text-center max-w-md w-full"
       >
         <div className="mb-12 inline-flex flex-col items-center">
-          <div className="w-20 h-20 bg-red-600 rounded-2xl flex items-center justify-center shadow-[0_0_40px_rgba(220,38,38,0.3)] mb-6">
-            <span className="text-5xl font-black text-white italic">K</span>
+          <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-[0_0_40px_rgba(255,255,255,0.1)] mb-6 overflow-hidden p-3">
+            <img src="/favicon.png" alt="Kage-Movies" className="w-full h-full object-contain" />
           </div>
-          <h2 className="text-4xl font-bold tracking-tighter uppercase">Kage-movies</h2>
+          <h2 className="text-4xl font-bold tracking-tighter uppercase">Kage-Movies</h2>
         </div>
         
         <h1 className="text-5xl font-black italic tracking-tighter mb-6 uppercase text-stroke">Experience Cinema.</h1>
-        <p className="text-gray-400 mb-10 text-lg leading-relaxed">Stream your favorite movies with Kage-movies. High-speed streaming and premium quality, all in one place.</p>
+        <p className="text-gray-400 mb-10 text-lg leading-relaxed">Stream your favorite movies with Kage-Movies. High-speed streaming and premium quality, all in one place.</p>
         
         <button
           onClick={handleSignIn}
@@ -62,7 +62,7 @@ export default function Auth() {
         </button>
 
         <p className="mt-8 text-white/40 text-xs text-center px-4 leading-relaxed">
-          Before using this app, you can review Kage-movies’ 
+          Before using this app, you can review Kage-Movies’ 
           <button 
             onClick={() => setShowPrivacy(true)}
             className="text-white/60 hover:underline cursor-pointer focus:outline-none"
@@ -86,7 +86,7 @@ export default function Auth() {
         title="Privacy Policy"
       >
         <div className="space-y-4 text-white/70 text-sm leading-relaxed">
-          <p>Your privacy is important to us. It is Kage-movies' policy to respect your privacy regarding any information we may collect from you across our website.</p>
+          <p>Your privacy is important to us. It is Kage-Movies' policy to respect your privacy regarding any information we may collect from you across our website.</p>
           <p>We only ask for personal information when we truly need it to provide a service to you. We collect it by fair and lawful means, with your knowledge and consent. We also let you know why we’re collecting it and how it will be used.</p>
           <p>We only retain collected information for as long as necessary to provide you with your requested service. What data we store, we’ll protect within commercially acceptable means to prevent loss and theft, as well as unauthorized access, disclosure, copying, use or modification.</p>
           <p>We don’t share any personally identifying information publicly or with third-parties, except when required to by law.</p>
@@ -99,9 +99,9 @@ export default function Auth() {
         title="Terms of Service"
       >
         <div className="space-y-4 text-white/70 text-sm leading-relaxed">
-          <p>By accessing the website at Kage-movies, you are agreeing to be bound by these terms of service, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws.</p>
-          <p>The materials on Kage-movies' website are provided on an 'as is' basis. Kage-movies makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.</p>
-          <p>In no event shall Kage-movies or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on Kage-movies' website.</p>
+          <p>By accessing the website at Kage-Movies, you are agreeing to be bound by these terms of service, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws.</p>
+          <p>The materials on Kage-Movies' website are provided on an 'as is' basis. Kage-Movies makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.</p>
+          <p>In no event shall Kage-Movies or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on Kage-Movies' website.</p>
         </div>
       </LegalModal>
     </div>

@@ -16,7 +16,7 @@ export default function WhatsAppBubble() {
       <div className="absolute -top-24 right-0 bg-white text-gray-800 px-5 py-4 rounded-2xl text-[13px] font-medium opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-6 group-hover:translate-y-0 pointer-events-none whitespace-nowrap shadow-[0_20px_50px_-20px_rgba(0,0,0,0.3)] border border-gray-100 flex flex-col gap-1 min-w-[300px]">
         <div className="flex items-center gap-2 mb-1">
           <div className="w-2 h-2 bg-[#25D366] rounded-full animate-pulse" />
-          <span className="text-[11px] font-bold text-[#25D366] uppercase tracking-wider">Kage-movies</span>
+          <span className="text-[11px] font-bold text-[#25D366] uppercase tracking-wider">Kage-Movies</span>
         </div>
         <p className="text-gray-700 leading-tight">
           Not seeing the movie you want, Request that for that Movie

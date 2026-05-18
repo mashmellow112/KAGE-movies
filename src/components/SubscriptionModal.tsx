@@ -84,7 +84,7 @@ export default function SubscriptionModal({ isOpen, onClose }: SubscriptionModal
                 <div>
                   <h3 className="text-2xl font-black italic uppercase tracking-tighter text-white">Unlimited Access</h3>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-red-500 bg-red-500/10 px-2 py-0.5 rounded-full">Kage Gold</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-red-500 bg-red-500/10 px-2 py-0.5 rounded-full">Kage-Movies Gold</span>
                   </div>
                 </div>
               </div>
@@ -179,7 +179,7 @@ export default function SubscriptionModal({ isOpen, onClose }: SubscriptionModal
                   </button>
                   
                   <p className="text-[10px] text-center text-gray-600 uppercase font-black tracking-widest">
-                    Your data is safe with Kage Encryption
+                    Your data is safe with Kage-Movies Encryption
                   </p>
                 </div>
               )}

@@ -1,6 +1,6 @@
 {
-  "name": "Kage-movies",
+  "name": "Kage-Movies",
   "description": "A premium movie platform featuring a Ugx 4,000 monthly pass for unlimited downloads, Google Sign-in, and Mobile Money (Airtel/MTN) integration.",
   "requestFramePermissions": [],
-  "majorCapabilities": []
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

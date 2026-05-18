@@ -1,6 +1,6 @@
-# Kage-movies 🎬
+# Kage-Movies 🎬
 
-Kage-movies is a premium movie discovery and subscription platform built for a high-end cinematic experience. Users can explore the latest blockbusters, watch trailers, and unlock unlimited access through a monthly premium pass.
+Kage-Movies is a premium movie discovery and subscription platform built for a high-end cinematic experience. Users can explore the latest blockbusters, watch trailers, and unlock unlimited access through a monthly premium pass.
 
 ## ✨ Features
 
@@ -11,7 +11,7 @@ Kage-movies is a premium movie discovery and subscription platform built for a h
   - Automatic expiry tracking with real-time library sync.
 - **Mobile Money Integration**: 
   - Tailored UI for **Airtel Money** and **MTN MoMo** payments.
-  - Secure transaction simulation via Kage Payments.
+  - Secure transaction simulation via Kage-Movies Payments.
 - **Cinematic UI/UX**:
   - Dark-mode first aesthetic with high-quality posters.
   - Fluid animations and transitions powered by Framer Motion.
@@ -82,4 +82,4 @@ To use a local image, update the `posterUrl` in `src/constants/movies.ts`:
 
 ---
 
-*Built with ❤️ by the Kage-movies Team.*
+*Built with ❤️ by the Kage-Movies Team.*
