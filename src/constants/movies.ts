@@ -22,7 +22,7 @@ export const MOVIES: Movie[] = [
     price: 4000,
     genre: ['Action', 'Sci-Fi', 'Fantasy'],
     rating: 6.6,
-    year: 2025
+    year: 2024
   },
   {
     id: 'm3',
@@ -33,7 +33,7 @@ export const MOVIES: Movie[] = [
     price: 4000,
     genre: ['Action', 'Sci-Fi'],
     rating: 6.0,
-    year: 2025
+    year: 2024
   },
   {
     id: 'm4',
@@ -44,7 +44,7 @@ export const MOVIES: Movie[] = [
     price: 4000,
     genre: ['Action', 'Crime', 'Sci-Fi'],
     rating: 5.9,
-    year: 2025
+    year: 2019
   },
   {
     id: 'm5',
@@ -55,7 +55,7 @@ export const MOVIES: Movie[] = [
     price: 4000,
     genre: ['Action', 'Comedy', 'Crime'],
     rating: 5.5,
-    year: 2025
+    year: 2024
   },
   {
     id: 'm6',
@@ -66,7 +66,7 @@ export const MOVIES: Movie[] = [
     price: 4000,
     genre: ['Action', 'Sci-Fi'],
     rating: 5.2,
-    year: 2025
+    year: 2024
   },
   {
     id: 'm7',
@@ -77,7 +77,7 @@ export const MOVIES: Movie[] = [
     price: 4000,
     genre: ['Action', 'Sci-Fi', 'Thriller'],
     rating: 5.6,
-    year: 2025
+    year: 2024
   },
   {
     id: 'm8',
@@ -88,7 +88,7 @@ export const MOVIES: Movie[] = [
     price: 4000,
     genre: ['Action', 'Thriller', 'War'],
     rating: 6.5,
-    year: 2025
+    year: 2024
   },
   {
     id: 'm9',
@@ -99,7 +99,7 @@ export const MOVIES: Movie[] = [
     price: 4000,
     genre: ['Action', 'Comedy', 'Thriller'],
     rating: 6.4,
-    year: 2025
+    year: 2023
   },
   {
     id: 'm10',
@@ -110,7 +110,7 @@ export const MOVIES: Movie[] = [
     price: 4000,
     genre: ['Action', 'Adventure', 'Fantasy'],
     rating: 6.1,
-    year: 2025
+    year: 2024
   },
   {
     id: 'm11',
@@ -121,7 +121,7 @@ export const MOVIES: Movie[] = [
     price: 4000,
     genre: ['Action', 'Thriller'],
     rating: 6.9,
-    year: 2025
+    year: 2024
   },
   {
     id: 'm12',
@@ -132,7 +132,7 @@ export const MOVIES: Movie[] = [
     price: 4000,
     genre: ['Action', 'Comedy', 'Thriller'],
     rating: 7.0,
-    year: 2025
+    year: 2024
   },
   {
     id: 'm13',
@@ -143,7 +143,7 @@ export const MOVIES: Movie[] = [
     price: 4000,
     genre: ['Action', 'Adventure', 'Sci-Fi'],
     rating: 6.3,
-    year: 2025
+    year: 2024
   },
   {
     id: 'm14',
@@ -154,7 +154,7 @@ export const MOVIES: Movie[] = [
     price: 4000,
     genre: ['Action', 'Comedy', 'Drama'],
     rating: 7.0,
-    year: 2025
+    year: 2024
   },
   {
     id: 'm16',
@@ -165,7 +165,7 @@ export const MOVIES: Movie[] = [
     price: 4000,
     genre: ['Action', 'Sci-Fi'],
     rating: 7.0,
-    year: 2025
+    year: 2024
   },
   {
     id: 'm19',
@@ -176,7 +176,7 @@ export const MOVIES: Movie[] = [
     price: 4000,
     genre: ['Action', 'Adventure', 'Sci-Fi'],
     rating: 8.9,
-    year: 2025
+    year: 2024
   },
   {
     id: 'm24',
@@ -231,6 +231,6 @@ export const MOVIES: Movie[] = [
     price: 4000,
     genre: ['Action', 'Adventure', 'Comedy'],
     rating: 7.5,
-    year: 2025
+    year: 2024
   }
 ];
