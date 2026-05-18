@@ -10,7 +10,7 @@ export const MOVIES: Movie[] = [
     downloadUrl: 'https://mega.nz/file/d7JHWY7T#i_Hfh5og3l4QcAy9LKAs95WQKCyPTD7bLEMdwEfIo4I',
     price: 4000,
     genre: ['Action', 'Thriller'],
-    rating: 7.4,
+    rating: 9.2,
     year: 2025
   },
   {
@@ -175,7 +175,7 @@ export const MOVIES: Movie[] = [
     trailerUrl: 'https://www.youtube.com/watch?v=Way9Dexny3w',
     price: 4000,
     genre: ['Action', 'Adventure', 'Sci-Fi'],
-    rating: 8.9,
+    rating: 8.5,
     year: 2024
   },
   {
