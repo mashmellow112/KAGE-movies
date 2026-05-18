@@ -49,7 +49,14 @@ export default function DownloadModal({ isOpen, onClose, movie }: DownloadModalP
                   onClick={() => {
                     const downloadLink = movie.downloadUrl || movie.trailerUrl;
                     if (downloadLink) {
-                      window.open(downloadLink, '_blank');
+                      // Attempt a more direct download
+                      const link = document.createElement('a');
+                      link.href = downloadLink;
+                      link.setAttribute('download', `${movie.title}.mp4`);
+                      link.setAttribute('target', '_blank');
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
                     } else {
                       alert("Download link not available.");
                     }
@@ -57,7 +64,7 @@ export default function DownloadModal({ isOpen, onClose, movie }: DownloadModalP
                   }}
                   className="w-full py-5 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-black uppercase tracking-[0.3em] text-[10px] transition-all active:scale-95 shadow-xl shadow-red-600/20 flex items-center justify-center gap-3"
                 >
-                  Download via Mega <Download className="w-4 h-4" />
+                  DOWNLOAD <Download className="w-4 h-4" />
                 </button>
                 
                 <button

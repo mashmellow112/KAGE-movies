@@ -85,7 +85,7 @@ export default function MovieDetailModal({ movie, isOpen, onClose, onDownload, o
                     className="flex-1 h-14 md:h-16 bg-red-600 text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest text-[10px] md:text-xs flex items-center justify-center gap-3 hover:bg-red-700 transition-all active:scale-95 shadow-xl shadow-red-600/20"
                   >
                     <Download className="w-4 h-4" />
-                    Download
+                    DOWNLOAD
                   </button>
                   <button
                     onClick={() => onWatch(movie)}

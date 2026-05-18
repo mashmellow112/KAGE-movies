@@ -205,7 +205,15 @@ export default function MoviePremiumPlayer({ movie, isOpen, onClose }: MoviePrem
   };
 
   const handleDownload = () => {
-    window.open(movie.downloadUrl, '_blank');
+    if (movie.downloadUrl) {
+      const link = document.createElement('a');
+      link.href = movie.downloadUrl;
+      link.setAttribute('download', `${movie.title}.mp4`);
+      link.setAttribute('target', '_blank');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   const PlayerWrapper = React.forwardRef<HTMLDivElement, any>((props, ref) => {
@@ -306,7 +314,7 @@ export default function MoviePremiumPlayer({ movie, isOpen, onClose }: MoviePrem
                     onClick={handleDownload}
                     className="px-12 py-5 bg-red-600 text-white rounded-2xl font-black uppercase text-xs tracking-[0.3em] hover:bg-red-700 transition-all active:scale-95 shadow-2xl shadow-red-600/40"
                   >
-                    Open Download Link
+                    DOWNLOAD
                   </button>
                   <button 
                     onClick={onClose}
